@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SyndIA V4 — Plateforme SaaS Syndic</title>
+<title>SyndIA V5 — Plateforme SaaS Syndic</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -67,7 +67,7 @@ main{flex:1;overflow:hidden;display:flex;flex-direction:column;background:var(--
 .btn-danger{background:var(--dbg);color:var(--danger);border:1px solid #f0c0c0}
 
 /* VIEWS */
-.view{display:none;height:100%}.view.active{display:flex;flex-direction:column}
+.view{display:none;height:100%;flex-direction:column}
 .view-scroll{overflow-y:auto;flex:1}
 
 /* CARDS & STATS */
@@ -94,10 +94,10 @@ label{font-size:11px;font-weight:500;color:var(--text2)}
 input,select,textarea{background:var(--white);border:1.5px solid var(--border2);border-radius:7px;padding:8px 11px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);outline:none;width:100%}
 input:focus,select:focus,textarea:focus{border-color:var(--gold)}
 textarea{resize:vertical;min-height:72px}
-.tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:18px}
-.tab{padding:9px 16px;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px}
+.tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:18px;overflow-x:auto}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:9px 16px;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap}
 .tab.active{color:var(--navy);border-bottom-color:var(--gold)}
-.tab-content{display:none}.tab-content.active{display:block}
 
 /* MISC UI */
 .dpe{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:5px;font-size:11px;font-weight:700;color:#fff}
@@ -115,6 +115,20 @@ textarea{resize:vertical;min-height:72px}
 .loading-box{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--ibg);border:1px solid #b0d0f0;border-radius:var(--r);font-size:12px;color:var(--info)}
 .spin{width:16px;height:16px;border:2px solid #b0d0f0;border-top-color:var(--info);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* CHAT AREA */
+.chat-layout{display:flex;flex-direction:column;flex:1;overflow:hidden}
+#chat-messages{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
+.msg{display:flex;flex-direction:column;max-width:84%}
+.msg.user{align-self:flex-end;align-items:flex-end}
+.msg.ai{align-self:flex-start}
+.bubble{padding:11px 14px;border-radius:12px;font-size:12px;line-height:1.7}
+.msg.user .bubble{background:var(--navy);color:#e0e8f0;border-bottom-right-radius:3px}
+.msg.ai .bubble{background:var(--white);border:1px solid var(--border);color:var(--text);border-bottom-left-radius:3px;box-shadow:var(--sh)}
+.chat-input-zone{padding:10px 18px 14px;background:var(--white);border-top:1px solid var(--border);flex-shrink:0}
+.chat-input-row{display:flex;gap:7px;align-items:flex-end}
+#chat-input{flex:1;background:var(--cream);border:1.5px solid var(--border2);border-radius:10px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:12px;resize:none}
+.chat-send{width:40px;height:40px;border-radius:9px;background:var(--navy);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
 </style>
 </head>
 <body>
@@ -133,7 +147,6 @@ textarea{resize:vertical;min-height:72px}
       <label>Mot de passe</label>
       <input type="password" value="password123">
     </div>
-    
     <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;font-size:13px" onclick="login()">Se connecter</button>
   </div>
 </div>
@@ -144,21 +157,29 @@ textarea{resize:vertical;min-height:72px}
   <div class="sb-logo">
     <div class="logo-row">
       <div class="logo-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f1729" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
-      <div><div class="logo-text">SyndIA</div><div class="logo-sub">SYNDIC V4</div></div>
+      <div><div class="logo-text">SyndIA</div><div class="logo-sub">SYNDIC V5 PRO</div></div>
     </div>
   </div>
 
   <div class="sb-section">
     <div class="sb-label">GESTION</div>
-    <div class="nav-item active" onclick="nav('dashboard')"><span class="nav-icon">📊</span><span>Tableau de bord</span></div>
+    <div class="nav-item" onclick="nav('dashboard')"><span class="nav-icon">📊</span><span>Tableau de bord</span></div>
     <div class="nav-item" onclick="nav('immeubles')"><span class="nav-icon">🏢</span><span>Mes immeubles</span></div>
+    <div class="nav-item" onclick="nav('agenda')"><span class="nav-icon">📅</span><span>Calendrier AG</span></div>
     <div class="nav-item" onclick="nav('missions')"><span class="nav-icon">✅</span><span>Tâches & Missions</span></div>
   </div>
 
   <div class="sb-section">
     <div class="sb-label">IA & RAPPORTS</div>
     <div class="nav-item" onclick="nav('documents')"><span class="nav-icon">📄</span><span>Analyse Documents</span></div>
+    <div class="nav-item" onclick="nav('assistant')"><span class="nav-icon">🤖</span><span>Assistant IA</span></div>
     <div class="nav-item" onclick="nav('rapports')"><span class="nav-icon">📋</span><span>Générateur IA</span></div>
+    <div class="nav-item" onclick="nav('energie')"><span class="nav-icon">⚡</span><span>Suivi énergie</span></div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-label">SUIVI</div>
+    <div class="nav-item" onclick="nav('alertes')"><span class="nav-icon">🔔</span><span>Alertes</span><span class="nav-badge" id="badge-alertes">0</span></div>
   </div>
 
   <div class="sb-footer">
@@ -175,7 +196,7 @@ textarea{resize:vertical;min-height:72px}
 
 <main>
 
-<div class="view active" id="view-dashboard">
+<div class="view" id="view-dashboard">
   <div class="topbar">
     <div><div class="topbar-title">Tableau de bord</div><div class="topbar-sub">Vue globale du portefeuille</div></div>
     <button class="btn btn-gold" onclick="nav('immeubles');setTimeout(showAddModal,100)">+ Immeuble</button>
@@ -199,6 +220,29 @@ textarea{resize:vertical;min-height:72px}
   </div>
   <div class="view-scroll"><div class="content">
     <div class="card"><div id="imm-table"></div></div>
+  </div></div>
+</div>
+
+<div class="view" id="view-agenda">
+  <div class="topbar">
+    <div><div class="topbar-title">Calendrier AG</div><div class="topbar-sub">Suivi des délais légaux</div></div>
+    <button class="btn btn-gold" onclick="showAgModal()">+ Planifier une AG</button>
+  </div>
+  <div class="view-scroll"><div class="content">
+    <div id="agenda-list"><div style="padding:40px;text-align:center;font-size:12px;color:var(--text3)">Aucune AG planifiée</div></div>
+  </div></div>
+</div>
+
+<div class="view" id="view-missions">
+  <div class="topbar">
+    <div><div class="topbar-title">Missions & Tâches</div></div>
+    <button class="btn btn-gold" onclick="showMissionModal()">+ Nouvelle Tâche</button>
+  </div>
+  <div class="view-scroll"><div class="content">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card"><div class="card-header"><span class="card-title">⏳ À Faire</span></div><div class="card-body" id="missions-todo" style="display:flex;flex-direction:column;gap:10px"></div></div>
+      <div class="card"><div class="card-header"><span class="card-title">✅ Terminé</span></div><div class="card-body" id="missions-done" style="display:flex;flex-direction:column;gap:10px;opacity:0.7"></div></div>
+    </div>
   </div></div>
 </div>
 
@@ -230,50 +274,72 @@ textarea{resize:vertical;min-height:72px}
   </div></div>
 </div>
 
-<div class="view" id="view-missions">
-  <div class="topbar">
-    <div><div class="topbar-title">Missions & Tâches</div></div>
-    <button class="btn btn-gold" onclick="showMissionModal()">+ Nouvelle Tâche</button>
-  </div>
-  <div class="view-scroll"><div class="content">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div class="card"><div class="card-header"><span class="card-title">⏳ À Faire</span></div><div class="card-body" id="missions-todo" style="display:flex;flex-direction:column;gap:10px"></div></div>
-      <div class="card"><div class="card-header"><span class="card-title">✅ Terminé</span></div><div class="card-body" id="missions-done" style="display:flex;flex-direction:column;gap:10px;opacity:0.7"></div></div>
-    </div>
-  </div></div>
-</div>
-
 <div class="view" id="view-documents">
   <div class="topbar"><div class="topbar-title">Analyse IA de Documents</div></div>
   <div class="view-scroll"><div class="content">
     <div class="tabs" id="tabs-doc">
-      <div class="tab active" onclick="switchDocTab('reglement')">📜 Règlement copropriété</div>
-      <div class="tab" onclick="switchDocTab('devis')">⚖️ Comparateur Devis</div>
-      <div class="tab" onclick="switchDocTab('contrats')">🤝 Audit Contrats</div>
+      <div class="tab active" data-target="reglement" onclick="switchDocTab('reglement')">📜 Règlement</div>
+      <div class="tab" data-target="pv" onclick="switchDocTab('pv')">📋 PV AG</div>
+      <div class="tab" data-target="carnet" onclick="switchDocTab('carnet')">🔧 Carnet Entretien</div>
+      <div class="tab" data-target="devis" onclick="switchDocTab('devis')">⚖️ Comparateur Devis</div>
+      <div class="tab" data-target="contrats" onclick="switchDocTab('contrats')">🤝 Audit Contrats</div>
     </div>
 
-    <div class="tab-content active" id="dtab-reglement">
+    <div class="dtab-content" id="dtab-reglement" style="display:block;">
       <div class="card"><div class="card-body">
         <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Déposez le règlement (PDF). L'IA extrait : lots, tantièmes, règles spécifiques.</p>
-        <div class="upload-zone" id="reg-zone" onclick="document.getElementById('reg-inp').click()"><input type="file" id="reg-inp" style="display:none" accept=".pdf" onchange="analyzeDoc(this,'reg')"><div style="font-size:32px">📜</div><div style="font-size:13px;font-weight:600;margin-top:8px">Glissez le règlement PDF ici</div></div>
+        <input type="file" id="reg-inp" style="display:none" accept=".pdf" onchange="analyzeReglement(this)">
+        <div class="upload-zone" onclick="document.getElementById('reg-inp').click()">
+          <div style="font-size:32px">📜</div><div style="font-size:13px;font-weight:600;margin-top:8px">Glissez le règlement PDF ici</div>
+        </div>
         <div id="reg-load" style="display:none;margin-top:14px" class="loading-box"><div class="spin"></div>Analyse du règlement...</div>
         <div id="reg-res" style="display:none"><div class="result-box" id="reg-txt"></div></div>
       </div></div>
     </div>
+    
+    <div class="dtab-content" id="dtab-pv" style="display:none;">
+      <div class="card"><div class="card-body">
+        <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Importez le PV de votre dernière AG. L'IA extrait les résolutions votées.</p>
+        <input type="file" id="pv-inp" style="display:none" accept=".pdf" onchange="analyzePV(this)">
+        <div class="upload-zone" onclick="document.getElementById('pv-inp').click()">
+          <div style="font-size:32px">📋</div><div style="font-size:13px;font-weight:600;margin-top:8px">Glissez le PV d'AG ici</div>
+        </div>
+        <div id="pv-load" style="display:none;margin-top:14px" class="loading-box"><div class="spin"></div>Analyse du PV...</div>
+        <div id="pv-res" style="display:none"><div class="result-box" id="pv-txt"></div></div>
+      </div></div>
+    </div>
 
-    <div class="tab-content" id="dtab-devis">
+    <div class="dtab-content" id="dtab-carnet" style="display:none;">
+      <div class="card"><div class="card-body">
+        <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Importez le carnet d'entretien. L'IA génère le plan de travail 2025.</p>
+        <input type="file" id="car-inp" style="display:none" accept=".pdf" onchange="analyzeCarnet(this)">
+        <div class="upload-zone" onclick="document.getElementById('car-inp').click()">
+          <div style="font-size:32px">🔧</div><div style="font-size:13px;font-weight:600;margin-top:8px">Glissez le carnet ici</div>
+        </div>
+        <div id="car-load" style="display:none;margin-top:14px" class="loading-box"><div class="spin"></div>Analyse du carnet...</div>
+        <div id="car-res" style="display:none"><div class="result-box" id="car-txt"></div></div>
+      </div></div>
+    </div>
+
+    <div class="dtab-content" id="dtab-devis" style="display:none;">
       <div class="card"><div class="card-body">
         <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Importez 2 à 3 devis (PDF). L'IA va aligner et comparer les lignes de prix.</p>
-        <div class="upload-zone" onclick="document.getElementById('dev-inp').click()"><input type="file" id="dev-inp" style="display:none" accept=".pdf" multiple onchange="analyzeDevis(this)"><div style="font-size:32px">⚖️</div><div style="font-size:13px;font-weight:600;margin-top:8px">Glissez vos devis ici</div></div>
+        <input type="file" id="dev-inp" style="display:none" accept=".pdf" multiple onchange="analyzeDevis(this)">
+        <div class="upload-zone" onclick="document.getElementById('dev-inp').click()">
+          <div style="font-size:32px">⚖️</div><div style="font-size:13px;font-weight:600;margin-top:8px">Glissez 2 ou 3 devis ici</div>
+        </div>
         <div id="dev-load" style="display:none;margin-top:14px" class="loading-box"><div class="spin"></div>Comparaison en cours...</div>
         <div id="dev-res" style="display:none"><div class="result-box" id="dev-txt"></div></div>
       </div></div>
     </div>
 
-    <div class="tab-content" id="dtab-contrats">
+    <div class="dtab-content" id="dtab-contrats" style="display:none;">
       <div class="card"><div class="card-body">
         <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Déposez un contrat. L'IA extrait le préavis et calcule la date limite de résiliation.</p>
-        <div class="upload-zone" onclick="document.getElementById('con-inp').click()"><input type="file" id="con-inp" style="display:none" accept=".pdf" onchange="analyzeDoc(this,'con')"><div style="font-size:32px">🤝</div><div style="font-size:13px;font-weight:600;margin-top:8px">Glissez le contrat PDF ici</div></div>
+        <input type="file" id="con-inp" style="display:none" accept=".pdf" onchange="analyzeContrat(this)">
+        <div class="upload-zone" onclick="document.getElementById('con-inp').click()">
+          <div style="font-size:32px">🤝</div><div style="font-size:13px;font-weight:600;margin-top:8px">Glissez le contrat PDF ici</div>
+        </div>
         <div id="con-load" style="display:none;margin-top:14px" class="loading-box"><div class="spin"></div>Audit des clauses...</div>
         <div id="con-res" style="display:none"><div class="result-box" id="con-txt"></div></div>
       </div></div>
@@ -281,38 +347,102 @@ textarea{resize:vertical;min-height:72px}
   </div></div>
 </div>
 
+<div class="view" id="view-assistant">
+  <div class="topbar"><div class="topbar-title">Assistant IA Juridique</div></div>
+  <div class="chat-layout">
+    <div id="chat-messages">
+      <div class="msg ai"><div class="bubble">Bonjour ! Je suis votre expert en droit de la copropriété (Loi 1965, ALUR, etc.). Que puis-je faire pour vous ?</div></div>
+    </div>
+    <div class="chat-input-zone">
+      <div class="chat-input-row">
+        <textarea id="chat-input" placeholder="Posez une question juridique..."></textarea>
+        <button class="chat-send" onclick="sendChat()">Envoyer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="view" id="view-rapports">
   <div class="topbar"><div class="topbar-title">Générateur de Rapports IA</div></div>
   <div class="view-scroll"><div class="content">
     <div class="tabs" id="tabs-rap">
-      <div class="tab active" onclick="switchRapTab('ppt')">📋 Plan PPT</div>
-      <div class="tab" onclick="switchRapTab('courrier')">✉️ Courrier type</div>
+      <div class="tab active" data-target="ppt" onclick="switchRapTab('ppt')">📋 Plan PPT</div>
+      <div class="tab" data-target="ag" onclick="switchRapTab('ag')">📨 Convoc AG</div>
+      <div class="tab" data-target="cs" onclick="switchRapTab('cs')">👥 Note Conseil</div>
+      <div class="tab" data-target="courrier" onclick="switchRapTab('courrier')">✉️ Courrier type</div>
     </div>
 
-    <div class="tab-content active" id="rtab-ppt">
+    <div class="rtab-content" id="rtab-ppt" style="display:block;">
       <div class="card"><div class="card-body">
         <div class="form-grid">
           <div class="fg full"><label>Copropriété</label><input id="ppt-adr" placeholder="15 av. du Soleil, 13100 Aix"></div>
           <div class="fg"><label>Lots</label><input id="ppt-lots" type="number" placeholder="24"></div>
           <div class="fg"><label>DPE</label><select id="ppt-dpe"><option>A</option><option>D</option><option>F</option></select></div>
         </div>
-        <button class="btn btn-gold" style="margin-top:14px" onclick="genReport('ppt')">✦ Générer PPT</button>
+        <button class="btn btn-gold" style="margin-top:14px" onclick="genPPT()">✦ Générer PPT</button>
         <div id="ppt-load" style="display:none;margin-top:12px" class="loading-box"><div class="spin"></div>Génération...</div>
         <div id="ppt-res" style="display:none"><div class="result-box" id="ppt-txt"></div></div>
       </div></div>
     </div>
 
-    <div class="tab-content" id="rtab-courrier">
+    <div class="rtab-content" id="rtab-ag" style="display:none;">
       <div class="card"><div class="card-body">
         <div class="form-grid">
-          <div class="fg"><label>Destinataire</label><input id="co-dest" placeholder="M. Dupont"></div>
-          <div class="fg"><label>Objet</label><input id="co-obj" placeholder="Mise en demeure"></div>
+          <div class="fg full"><label>Copropriété</label><input id="ag-nom" placeholder="Résidence"></div>
+          <div class="fg full"><label>Ordre du jour (1 ligne par point)</label><textarea id="ag-odj" placeholder="Approbation comptes..."></textarea></div>
         </div>
-        <button class="btn btn-gold" style="margin-top:14px" onclick="genReport('courrier')">✦ Générer Courrier</button>
+        <button class="btn btn-gold" style="margin-top:14px" onclick="genAG()">✦ Générer Convocation</button>
+        <div id="ag-load" style="display:none;margin-top:12px" class="loading-box"><div class="spin"></div>Rédaction...</div>
+        <div id="ag-res" style="display:none"><div class="result-box" id="ag-txt"></div></div>
+      </div></div>
+    </div>
+
+    <div class="rtab-content" id="rtab-cs" style="display:none;">
+      <div class="card"><div class="card-body">
+        <div class="form-grid">
+          <div class="fg full"><label>Bilan Financier</label><textarea id="cs-fin" placeholder="Budget, impayés..."></textarea></div>
+          <div class="fg full"><label>Bilan Technique</label><textarea id="cs-tech" placeholder="Toiture, ascenseur..."></textarea></div>
+        </div>
+        <button class="btn btn-gold" style="margin-top:14px" onclick="genCS()">✦ Générer Note</button>
+        <div id="cs-load" style="display:none;margin-top:12px" class="loading-box"><div class="spin"></div>Rédaction...</div>
+        <div id="cs-res" style="display:none"><div class="result-box" id="cs-txt"></div></div>
+      </div></div>
+    </div>
+
+    <div class="rtab-content" id="rtab-courrier" style="display:none;">
+      <div class="card"><div class="card-body">
+        <div class="form-grid">
+          <div class="fg full"><label>Objet du courrier</label><input id="co-obj" placeholder="Mise en demeure pour charges..."></div>
+          <div class="fg"><label>Destinataire</label><input id="co-dest" placeholder="M. Dupont"></div>
+        </div>
+        <button class="btn btn-gold" style="margin-top:14px" onclick="genCourrier()">✦ Générer Courrier</button>
         <div id="co-load" style="display:none;margin-top:12px" class="loading-box"><div class="spin"></div>Rédaction...</div>
         <div id="co-res" style="display:none"><div class="result-box" id="co-txt"></div></div>
       </div></div>
     </div>
+  </div></div>
+</div>
+
+<div class="view" id="view-energie">
+  <div class="topbar"><div class="topbar-title">Suivi énergétique</div></div>
+  <div class="view-scroll"><div class="content">
+    <div class="card"><div class="card-body">
+      <div style="display:flex;gap:14px;align-items:center;margin-bottom:14px">
+        <div style="font-size:32px">⚡</div>
+        <div>
+          <div style="font-weight:600">Connexion Enedis / GRDF</div>
+          <div style="font-size:12px;color:var(--text2)">Importez vos CSV pour détecter les anomalies de consommation.</div>
+        </div>
+      </div>
+      <button class="btn btn-ghost">📂 Importer CSV Enedis</button>
+    </div></div>
+  </div></div>
+</div>
+
+<div class="view" id="view-alertes">
+  <div class="topbar"><div class="topbar-title">Alertes & obligations légales</div></div>
+  <div class="view-scroll"><div class="content">
+    <div class="card" id="all-alerts"><div style="padding:20px;text-align:center;font-size:12px;color:var(--text3)">Aucune alerte active</div></div>
   </div></div>
 </div>
 
@@ -322,6 +452,7 @@ textarea{resize:vertical;min-height:72px}
 <div class="modal-overlay hidden" id="api-modal">
   <div class="modal" style="max-width:400px;text-align:center">
     <div style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:6px">Clé API Anthropic</div>
+    <p style="font-size:11px;color:var(--text2);margin-bottom:14px">Indispensable pour faire fonctionner l'IA.</p>
     <input type="password" id="api-inp" placeholder="sk-ant-..." style="text-align:center;font-family:monospace;margin-bottom:12px">
     <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="saveKey()">Sauvegarder</button>
     <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="closeM('api-modal')">Annuler</button>
@@ -333,7 +464,9 @@ textarea{resize:vertical;min-height:72px}
     <div class="modal-title">Ajouter un immeuble</div>
     <div class="form-grid">
       <div class="fg full"><label>Nom</label><input id="i-nom" placeholder="Résidence Les Oliviers"></div>
+      <div class="fg"><label>Lots</label><input id="i-lots" type="number" placeholder="24"></div>
       <div class="fg"><label>DPE</label><select id="i-dpe"><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option></select></div>
+      <div class="fg"><label>Chauffage</label><select id="i-chauf"><option>Gaz collectif</option><option>Individuel</option></select></div>
       <div class="fg"><label>PPT</label><select id="i-ppt"><option value="non">À faire</option><option value="oui">Établi</option></select></div>
     </div>
     <div class="modal-footer"><button class="btn btn-ghost" onclick="closeM('add-modal')">Annuler</button><button class="btn btn-gold" onclick="saveImm()">Enregistrer</button></div>
@@ -351,24 +484,40 @@ textarea{resize:vertical;min-height:72px}
   </div>
 </div>
 
+<div class="modal-overlay hidden" id="ag-modal">
+  <div class="modal">
+    <div class="modal-title">Planifier AG</div>
+    <div class="form-grid">
+      <div class="fg full"><label>Copropriété</label><select id="ag-imm"><option value="">-- Choisir --</option></select></div>
+      <div class="fg full"><label>Date de l'AG</label><input id="ag-dt" type="date"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeM('ag-modal')">Annuler</button><button class="btn btn-gold" onclick="saveAG()">Enregistrer</button></div>
+  </div>
+</div>
+
 <script>
-// ═══ DATABASE SIMULATION (MULTI-TENANT) ═══
+// ═══ DATABASE SAAS SIMULÉE ═══
 let currentUser = null;
 let immeubles = [];
 let missions = [];
+let agendas = [];
 let apiKey = '';
 
+const SYS = "Tu es SyndIA, expert en copropriété française. Format HTML propre.";
+
+// Gère la connexion
 function login() {
   const email = document.getElementById('login-email').value;
   if(!email) return;
   currentUser = email;
   localStorage.setItem('syndia_session', email);
   
-  // Load data SPECIFIC to this user
+  // Charge la DB de cet utilisateur précis
   const raw = localStorage.getItem('syndia_db_' + email);
-  const db = raw ? JSON.parse(raw) : { immeubles: [], missions: [], apiKey: '' };
+  const db = raw ? JSON.parse(raw) : { immeubles: [], missions: [], agendas: [], apiKey: '' };
   immeubles = db.immeubles || [];
   missions = db.missions || [];
+  agendas = db.agendas || [];
   apiKey = db.apiKey || '';
 
   document.getElementById('login-screen').style.display = 'none';
@@ -376,7 +525,7 @@ function login() {
   document.getElementById('user-display').textContent = email;
   
   updateApi();
-  nav('dashboard');
+  nav('dashboard'); // Charge le menu principal
 }
 
 function logout() {
@@ -386,10 +535,9 @@ function logout() {
 
 function saveDB() {
   if(!currentUser) return;
-  localStorage.setItem('syndia_db_' + currentUser, JSON.stringify({ immeubles, missions, apiKey }));
+  localStorage.setItem('syndia_db_' + currentUser, JSON.stringify({ immeubles, missions, agendas, apiKey }));
 }
 
-// Check session on load
 window.onload = () => {
   const session = localStorage.getItem('syndia_session');
   if(session) {
@@ -398,66 +546,79 @@ window.onload = () => {
   }
 };
 
-// ═══ NAVIGATION PRINCIPALE ═══
+// ═══ NAVIGATION PRINCIPALE (BLINDÉE) ═══
 function nav(v) {
-  document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+  // Cache toutes les vues
+  document.querySelectorAll('.view').forEach(x => x.style.display = 'none');
+  // Retire la surbrillance des menus
   document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
   
+  // Affiche la bonne vue
   const target = document.getElementById('view-'+v);
-  if(target) target.classList.add('active');
+  if(target) target.style.display = 'flex';
   
-  // Activer le bon bouton du menu
+  // Surbrillance du bon menu (si on est sur détail immeuble, on allume l'onglet immeubles)
   let activeMenu = v === 'immeuble-detail' ? 'immeubles' : v;
-  const idx = ['dashboard','immeubles','missions','documents','rapports'].indexOf(activeMenu);
-  if(idx !== -1) document.querySelectorAll('.nav-item')[idx]?.classList.add('active');
+  const validMenus = ['dashboard','immeubles','agenda','missions','documents','assistant','rapports','energie','alertes'];
+  const idx = validMenus.indexOf(activeMenu);
+  if(idx !== -1) {
+    const items = document.querySelectorAll('.nav-item');
+    if(items[idx]) items[idx].classList.add('active');
+  }
 
-  // Rendu spécifique
+  // Appels de rafraichissement des données
   if(v==='dashboard') renderDash();
   if(v==='immeubles') renderImm();
   if(v==='missions') renderMissions();
+  if(v==='agenda') renderAgenda();
+  if(v==='alertes') renderAlertes();
 }
 
-// ═══ CORRECTION DES ONGLETS (TABS) ═══
+// ═══ SYSTÈME D'ONGLETS (100% FIABLE) ═══
 function switchDocTab(t) {
-  const all = ['reglement', 'devis', 'contrats'];
-  const tabs = document.getElementById('tabs-doc').querySelectorAll('.tab');
-  all.forEach((x, i) => {
-    tabs[i].classList.toggle('active', x === t);
-    document.getElementById('dtab-'+x).classList.toggle('active', x === t);
-  });
+  document.querySelectorAll('#tabs-doc .tab').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.dtab-content').forEach(el => el.style.display = 'none');
+  
+  const btn = document.querySelector(`#tabs-doc .tab[data-target="${t}"]`);
+  if (btn) btn.classList.add('active');
+  
+  const content = document.getElementById('dtab-' + t);
+  if (content) content.style.display = 'block';
 }
 
 function switchRapTab(t) {
-  const all = ['ppt', 'courrier'];
-  const tabs = document.getElementById('tabs-rap').querySelectorAll('.tab');
-  all.forEach((x, i) => {
-    tabs[i].classList.toggle('active', x === t);
-    document.getElementById('rtab-'+x).classList.toggle('active', x === t);
-  });
+  document.querySelectorAll('#tabs-rap .tab').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.rtab-content').forEach(el => el.style.display = 'none');
+  
+  const btn = document.querySelector(`#tabs-rap .tab[data-target="${t}"]`);
+  if (btn) btn.classList.add('active');
+  
+  const content = document.getElementById('rtab-' + t);
+  if (content) content.style.display = 'block';
 }
 
-// ═══ ROUTING : FICHE IMMEUBLE (DÉTAILS) ═══
+// ═══ ROUTING : FICHE IMMEUBLE ═══
 function navToBuilding(id) {
   const i = immeubles.find(x => x.id === id);
   if(!i) return;
   
   document.getElementById('det-nom').textContent = i.nom;
   document.getElementById('det-dpe').textContent = i.dpe;
+  document.getElementById('det-lots').textContent = i.lots || '-';
+  document.getElementById('det-chauf').textContent = i.chauf || '-';
   
-  // Alertes de l'immeuble
   let alHtml = '';
   if(i.ppt === 'non') alHtml += `<div class="alert-item"><div class="alert-dot" style="background:var(--danger)"></div><div style="font-size:12px">PPT Manquant (Urgent)</div></div>`;
   if(['F','G'].includes(i.dpe)) alHtml += `<div class="alert-item"><div class="alert-dot" style="background:var(--danger)"></div><div style="font-size:12px">Passoire thermique (DPE ${i.dpe})</div></div>`;
   document.getElementById('det-alerts').innerHTML = alHtml || '<div style="padding:16px;font-size:12px;color:var(--text3)">Aucune alerte</div>';
   
-  // Missions de l'immeuble
   const immMissions = missions.filter(m => m.immId === id);
   document.getElementById('det-missions').innerHTML = immMissions.length ? immMissions.map(m => `<div class="alert-item"><input type="checkbox" ${m.done?'checked':''} onchange="toggleMission('${m.id}')" style="margin-right:8px"><div style="font-size:12px;text-decoration:${m.done?'line-through':''}">${m.titre}</div></div>`).join('') : '<div style="padding:16px;font-size:12px;color:var(--text3)">Aucune tâche</div>';
   
   nav('immeuble-detail');
 }
 
-// ═══ VUES & COMPOSANTS ═══
+// ═══ RENDU DES DONNÉES ═══
 function renderDash() {
   document.getElementById('s-total').textContent = immeubles.length;
   document.getElementById('s-missions').textContent = missions.filter(m=>!m.done).length;
@@ -477,15 +638,16 @@ function renderDash() {
 function renderImm() {
   const tbl = document.getElementById('imm-table');
   if(!immeubles.length) { tbl.innerHTML = '<div style="padding:20px;text-align:center;font-size:12px;color:var(--text3)">Aucun immeuble</div>'; return; }
-  tbl.innerHTML = `<table><thead><tr><th>Copropriété</th><th>DPE</th><th>Actions</th></tr></thead><tbody>${immeubles.map(i => `
+  tbl.innerHTML = `<table><thead><tr><th>Copropriété</th><th>Lots</th><th>DPE</th><th>Actions</th></tr></thead><tbody>${immeubles.map(i => `
     <tr>
       <td onclick="navToBuilding('${i.id}')">${i.nom}</td>
+      <td onclick="navToBuilding('${i.id}')">${i.lots || '-'}</td>
       <td onclick="navToBuilding('${i.id}')"><span class="dpe dpe-${i.dpe}">${i.dpe}</span></td>
       <td><button class="btn btn-danger btn-sm" onclick="delImm('${i.id}')">Supprimer</button></td>
     </tr>`).join('')}</tbody></table>`;
 }
 
-// ═══ ACTIONS DB ═══
+// ═══ ACTIONS DB (CRUD) ═══
 function showAddModal() { document.getElementById('add-modal').classList.remove('hidden'); }
 function closeM(id) { document.getElementById(id).classList.add('hidden'); }
 
@@ -493,10 +655,14 @@ function saveImm() {
   immeubles.push({
     id: Date.now().toString(),
     nom: document.getElementById('i-nom').value || 'Nouvel Immeuble',
+    lots: document.getElementById('i-lots').value,
     dpe: document.getElementById('i-dpe').value,
+    chauf: document.getElementById('i-chauf').value,
     ppt: document.getElementById('i-ppt').value
   });
   saveDB(); closeM('add-modal'); renderDash(); renderImm();
+  const sel=document.getElementById('m-imm');
+  if(sel) sel.innerHTML='<option value="">-- Aucun --</option>'+immeubles.map(x=>`<option value="${x.id}">${x.nom}</option>`).join('');
 }
 function delImm(id) { immeubles = immeubles.filter(i=>i.id!==id); saveDB(); renderImm(); renderDash(); }
 
@@ -512,7 +678,7 @@ function saveMission() {
 function toggleMission(id) {
   const m = missions.find(x=>x.id===id); if(m) m.done = !m.done;
   saveDB(); renderMissions(); renderDash();
-  if(document.getElementById('view-immeuble-detail').classList.contains('active')) navToBuilding(m.immId);
+  if(document.getElementById('view-immeuble-detail').style.display === 'flex') navToBuilding(m.immId);
 }
 function renderMissions() {
   const todo = missions.filter(m=>!m.done); const done = missions.filter(m=>m.done);
@@ -521,24 +687,202 @@ function renderMissions() {
   document.getElementById('missions-done').innerHTML = done.length ? done.map(html).join('') : '';
 }
 
-// ═══ API & IA SIMULATION ═══
+function showAgModal() {
+  const sel = document.getElementById('ag-imm');
+  sel.innerHTML = '<option value="">-- Choisir --</option>' + immeubles.map(i => `<option value="${i.id}">${i.nom}</option>`).join('');
+  document.getElementById('ag-modal').classList.remove('hidden');
+}
+function saveAG() {
+  agendas.push({ id: Date.now().toString(), immId: document.getElementById('ag-imm').value, date: document.getElementById('ag-dt').value });
+  saveDB(); closeM('ag-modal'); renderAgenda();
+}
+function renderAgenda() {
+  const list = document.getElementById('agenda-list');
+  if(!agendas.length) { list.innerHTML = '<div style="padding:40px;text-align:center;font-size:12px;color:var(--text3)">Aucune AG planifiée</div>'; return; }
+  list.innerHTML = agendas.map(a => {
+    const i = immeubles.find(x => x.id === a.immId);
+    return `<div class="card" style="margin-bottom:10px"><div class="card-body" style="display:flex;justify-content:space-between">
+      <div><strong style="font-size:13px">${i ? i.nom : 'Inconnu'}</strong><br><span style="font-size:11px;color:var(--text2)">Date AG : ${a.date}</span></div>
+      <button class="btn btn-danger btn-sm" onclick="agendas=agendas.filter(x=>x.id!=='${a.id}');saveDB();renderAgenda()">🗑</button>
+    </div></div>`;
+  }).join('');
+}
+
+function renderAlertes() {
+  const list = document.getElementById('all-alerts');
+  let a = [];
+  immeubles.forEach(i => {
+    if(i.ppt==='non') a.push(`🚨 PPT Manquant pour ${i.nom}`);
+    if(['F','G'].includes(i.dpe)) a.push(`🚨 Passoire thermique DPE ${i.dpe} pour ${i.nom}`);
+  });
+  if(!a.length) { list.innerHTML = '<div style="padding:20px;text-align:center;font-size:12px;color:var(--text3)">Aucune alerte active</div>'; return; }
+  list.innerHTML = a.map(msg => `<div class="alert-item"><div class="alert-dot" style="background:var(--danger)"></div><div style="font-size:12px">${msg}</div></div>`).join('');
+  document.getElementById('badge-alertes').textContent = a.length;
+}
+
+// ═══ CONNEXION API ANTHROPIC (RÉELLE) ═══
 function showApiModal() { document.getElementById('api-modal').classList.remove('hidden'); }
 function saveKey() { apiKey = document.getElementById('api-inp').value; saveDB(); updateApi(); closeM('api-modal'); }
 function updateApi() { document.getElementById('api-dot').className = 'api-dot '+(apiKey?'ok':'off'); document.getElementById('api-lbl').textContent = apiKey ? 'IA Connectée' : 'API Manquante'; }
 
-async function simulateAI(resultId, loadId) {
-  if(!apiKey) { showApiModal(); return; }
-  document.getElementById(loadId).style.display = 'block';
-  document.getElementById(resultId).style.display = 'none';
-  setTimeout(() => { // Simulation d'appel API de 2s
-    document.getElementById(loadId).style.display = 'none';
-    document.getElementById(resultId).style.display = 'block';
-    document.getElementById(resultId.replace('res','txt')).innerHTML = "<strong>Résultat IA généré.</strong><br><br>Dans la vraie version Next.js, c'est ici que l'appel API serveur sécurisé retourne l'analyse complète (Contrat, PPT, ou Devis).";
-  }, 1500);
+// Convertit le PDF pour Anthropic
+function readPDF(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.readAsDataURL(file);
+    r.onload = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+  });
 }
-function analyzeDoc(inp, prefix) { if(inp.files.length) simulateAI(prefix+'-res', prefix+'-load'); }
-function analyzeDevis(inp) { if(inp.files.length>1) simulateAI('dev-res', 'dev-load'); else alert('Sélectionnez au moins 2 devis'); }
-function genReport(type) { simulateAI(type==='ppt'?'ppt-res':'co-res', type==='ppt'?'ppt-load':'co-load'); }
+
+// Appel générique Texte
+async function callAI(prompt) {
+  if(!apiKey) { showApiModal(); throw new Error('Clé API manquante'); }
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+    body: JSON.stringify({ model: 'claude-3-5-sonnet-20240620', max_tokens: 3000, system: SYS, messages: [{ role: 'user', content: prompt }] })
+  });
+  const d = await r.json();
+  if(d.error) throw new Error(d.error.message);
+  return d.content[0].text;
+}
+
+// Appel générique Document (PDF)
+async function callAIDoc(pdfB64, prompt) {
+  if(!apiKey) { showApiModal(); throw new Error('Clé API manquante'); }
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+    body: JSON.stringify({
+      model: 'claude-3-5-sonnet-20240620', max_tokens: 3000, system: SYS,
+      messages: [{ role: 'user', content: [{ type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: pdfB64 } }, { type: 'text', text: prompt }] }]
+    })
+  });
+  const d = await r.json();
+  if(d.error) throw new Error(d.error.message);
+  return d.content[0].text;
+}
+
+// Fonctions d'Analyse de Documents
+async function analyzeReglement(inp) {
+  const f = inp.files[0]; if(!f) return;
+  document.getElementById('reg-load').style.display = 'flex'; document.getElementById('reg-res').style.display = 'none';
+  try {
+    const b64 = await readPDF(f);
+    const res = await callAIDoc(b64, "Analyse ce règlement de copropriété. Extrais : lots, tantièmes, règles spécifiques d'usage.");
+    document.getElementById('reg-txt').innerHTML = res.replace(/\n/g, '<br>');
+    document.getElementById('reg-res').style.display = 'block';
+  } catch(e) { alert("Erreur IA : " + e.message); }
+  document.getElementById('reg-load').style.display = 'none';
+}
+
+async function analyzePV(inp) {
+  const f = inp.files[0]; if(!f) return;
+  document.getElementById('pv-load').style.display = 'flex'; document.getElementById('pv-res').style.display = 'none';
+  try {
+    const b64 = await readPDF(f);
+    const res = await callAIDoc(b64, "Analyse ce PV d'AG. Résume les résolutions votées, les travaux décidés et le budget.");
+    document.getElementById('pv-txt').innerHTML = res.replace(/\n/g, '<br>');
+    document.getElementById('pv-res').style.display = 'block';
+  } catch(e) { alert("Erreur IA : " + e.message); }
+  document.getElementById('pv-load').style.display = 'none';
+}
+
+async function analyzeCarnet(inp) {
+  const f = inp.files[0]; if(!f) return;
+  document.getElementById('car-load').style.display = 'flex'; document.getElementById('car-res').style.display = 'none';
+  try {
+    const b64 = await readPDF(f);
+    const res = await callAIDoc(b64, "Analyse ce carnet d'entretien. Génère le plan de travail 2025 (travaux urgents et planifiables).");
+    document.getElementById('car-txt').innerHTML = res.replace(/\n/g, '<br>');
+    document.getElementById('car-res').style.display = 'block';
+  } catch(e) { alert("Erreur IA : " + e.message); }
+  document.getElementById('car-load').style.display = 'none';
+}
+
+async function analyzeDevis(inp) {
+  if(inp.files.length < 2) { alert('Veuillez sélectionner au moins 2 devis.'); return; }
+  document.getElementById('dev-load').style.display = 'flex'; document.getElementById('dev-res').style.display = 'none';
+  try {
+    let docs = [];
+    for(let i=0; i<inp.files.length; i++) {
+      const b64 = await readPDF(inp.files[i]);
+      docs.push({ type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } });
+    }
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-3-5-sonnet-20240620', max_tokens: 3000, system: SYS, messages: [{ role: 'user', content: [...docs, { type: 'text', text: "Compare ces devis : Prix, prestations, exclusions, garanties." }] }] })
+    });
+    const d = await r.json();
+    document.getElementById('dev-txt').innerHTML = d.content[0].text.replace(/\n/g, '<br>');
+    document.getElementById('dev-res').style.display = 'block';
+  } catch(e) { alert("Erreur IA : " + e.message); }
+  document.getElementById('dev-load').style.display = 'none';
+}
+
+async function analyzeContrat(inp) {
+  const f = inp.files[0]; if(!f) return;
+  document.getElementById('con-load').style.display = 'flex'; document.getElementById('con-res').style.display = 'none';
+  try {
+    const b64 = await readPDF(f);
+    const res = await callAIDoc(b64, "Analyse ce contrat. Extrais la date anniversaire, la durée du préavis de résiliation et les exclusions majeures.");
+    document.getElementById('con-txt').innerHTML = res.replace(/\n/g, '<br>');
+    document.getElementById('con-res').style.display = 'block';
+  } catch(e) { alert("Erreur IA : " + e.message); }
+  document.getElementById('con-load').style.display = 'none';
+}
+
+// Fonctions de Génération de Textes
+async function genPPT() {
+  document.getElementById('ppt-load').style.display = 'flex'; document.getElementById('ppt-res').style.display = 'none';
+  try {
+    const res = await callAI(`Génère un Plan Pluriannuel de Travaux pour : ${document.getElementById('ppt-adr').value}, Lots: ${document.getElementById('ppt-lots').value}, DPE: ${document.getElementById('ppt-dpe').value}.`);
+    document.getElementById('ppt-txt').innerHTML = res.replace(/\n/g, '<br>'); document.getElementById('ppt-res').style.display = 'block';
+  } catch(e) { alert("Erreur : " + e.message); }
+  document.getElementById('ppt-load').style.display = 'none';
+}
+async function genAG() {
+  document.getElementById('ag-load').style.display = 'flex'; document.getElementById('ag-res').style.display = 'none';
+  try {
+    const res = await callAI(`Rédige une convocation AG pour : ${document.getElementById('ag-nom').value}. Ordre du jour : ${document.getElementById('ag-odj').value}.`);
+    document.getElementById('ag-txt').innerHTML = res.replace(/\n/g, '<br>'); document.getElementById('ag-res').style.display = 'block';
+  } catch(e) { alert("Erreur : " + e.message); }
+  document.getElementById('ag-load').style.display = 'none';
+}
+async function genCS() {
+  document.getElementById('cs-load').style.display = 'flex'; document.getElementById('cs-res').style.display = 'none';
+  try {
+    const res = await callAI(`Rédige une note pour le Conseil Syndical. Bilan financier : ${document.getElementById('cs-fin').value}. Bilan technique : ${document.getElementById('cs-tech').value}.`);
+    document.getElementById('cs-txt').innerHTML = res.replace(/\n/g, '<br>'); document.getElementById('cs-res').style.display = 'block';
+  } catch(e) { alert("Erreur : " + e.message); }
+  document.getElementById('cs-load').style.display = 'none';
+}
+async function genCourrier() {
+  document.getElementById('co-load').style.display = 'flex'; document.getElementById('co-res').style.display = 'none';
+  try {
+    const res = await callAI(`Rédige un courrier de syndic. Objet : ${document.getElementById('co-obj').value}. Destinataire : ${document.getElementById('co-dest').value}.`);
+    document.getElementById('co-txt').innerHTML = res.replace(/\n/g, '<br>'); document.getElementById('co-res').style.display = 'block';
+  } catch(e) { alert("Erreur : " + e.message); }
+  document.getElementById('co-load').style.display = 'none';
+}
+
+// Chat Assistant IA
+async function sendChat() {
+  const inp = document.getElementById('chat-input');
+  const txt = inp.value; if(!txt) return;
+  inp.value = '';
+  
+  const msgs = document.getElementById('chat-messages');
+  msgs.innerHTML += `<div class="msg user"><div class="bubble">${txt}</div></div>`;
+  
+  try {
+    const res = await callAI(txt);
+    msgs.innerHTML += `<div class="msg ai"><div class="bubble">${res.replace(/\n/g, '<br>')}</div></div>`;
+  } catch(e) { msgs.innerHTML += `<div class="msg ai"><div class="bubble">⚠️ Erreur : ${e.message}</div></div>`; }
+  
+  msgs.scrollTop = msgs.scrollHeight;
+}
 </script>
 </body>
 </html>
