@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SyndIA V4 — Plateforme SaaS Syndic</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#0f1729;--navy2:#1a2744;--navy3:#243258;
+  --gold:#c9a84c;--gold2:#e8c87a;--gold-bg:#fdf8ec;
+  --cream:#faf8f3;--white:#fff;
+  --text:#1a1a2e;--text2:#5a6070;--text3:#9aa0b0;
+  --border:#e8e4dc;--border2:#d4cfc5;
+  --success:#2d7d5a;--sbg:#edf7f2;
+  --warn:#b85c00;--wbg:#fff4e8;
+  --danger:#b83232;--dbg:#fdeaea;
+  --info:#1a5fa8;--ibg:#eaf2ff;
+  --r:10px;--sh:0 2px 12px rgba(15,23,41,.07);--sh2:0 4px 24px rgba(15,23,41,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow:hidden}
+
+/* LOGIN SCREEN */
+#login-screen{position:fixed;inset:0;background:var(--navy);z-index:1000;display:flex;align-items:center;justify-content:center}
+.login-box{background:var(--white);padding:40px;border-radius:16px;width:100%;max-width:380px;text-align:center;box-shadow:var(--sh2)}
+
+/* APP LAYOUT */
+#app-layout{display:none;height:100vh}
+
+/* SIDEBAR */
+aside{width:230px;flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;z-index:10}
+.sb-logo{padding:20px 18px 16px;border-bottom:1px solid var(--navy3)}
+.logo-row{display:flex;align-items:center;gap:10px}
+.logo-icon{width:32px;height:32px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-text{font-family:'Playfair Display',serif;font-size:17px;color:#fff}
+.logo-sub{font-size:9px;color:var(--text3);letter-spacing:.08em;margin-top:1px}
+.sb-section{padding:14px 10px 6px}
+.sb-label{font-size:9px;font-weight:600;letter-spacing:.1em;color:var(--text3);padding:0 8px;margin-bottom:3px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;cursor:pointer;transition:background .15s;color:#8899bb;font-size:12px;font-weight:500;margin-bottom:1px;position:relative}
+.nav-item:hover{background:var(--navy2);color:#c0ccdd}
+.nav-item.active{background:var(--navy3);color:#fff}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:16px;background:var(--gold);border-radius:0 2px 2px 0}
+.nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px}
+.sb-footer{margin-top:auto;padding:12px;border-top:1px solid var(--navy3)}
+.api-btn{display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:7px;background:var(--navy2);cursor:pointer;transition:background .15s;margin-bottom:10px}
+.api-btn:hover{background:var(--navy3)}
+.api-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.api-dot.ok{background:#3ec96e;box-shadow:0 0 5px #3ec96e}
+.api-dot.off{background:var(--danger)}
+.api-lbl{font-size:11px;color:#8899bb}
+
+/* MAIN */
+main{flex:1;overflow:hidden;display:flex;flex-direction:column;background:var(--cream)}
+.topbar{padding:16px 26px 14px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.topbar-title{font-family:'Playfair Display',serif;font-size:19px;color:var(--text);flex:1}
+.topbar-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.content{padding:22px 26px;flex:1;overflow-y:auto}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--navy);color:#fff}.btn-primary:hover{background:var(--navy2)}
+.btn-gold{background:var(--gold);color:var(--navy)}.btn-gold:hover{background:var(--gold2)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}.btn-ghost:hover{background:var(--border);color:var(--text)}
+.btn-sm{padding:4px 10px;font-size:11px}
+.btn-danger{background:var(--dbg);color:var(--danger);border:1px solid #f0c0c0}
+
+/* VIEWS */
+.view{display:none;height:100%}.view.active{display:flex;flex-direction:column}
+.view-scroll{overflow-y:auto;flex:1}
+
+/* CARDS & STATS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:18px}
+.card-header{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.card-title{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.card-body{padding:16px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh)}
+.stat-label{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.04em;margin-bottom:6px}
+.stat-val{font-family:'Playfair Display',serif;font-size:24px;color:var(--text);margin-bottom:2px}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse}
+thead th{padding:9px 14px;font-size:10px;font-weight:600;color:var(--text3);text-align:left;background:var(--cream);border-bottom:1px solid var(--border)}
+tbody td{padding:10px 14px;font-size:12px;color:var(--text2);border-bottom:1px solid var(--border)}
+tbody tr:hover td{background:var(--cream);cursor:pointer}
+tbody tr td:first-child{color:var(--text);font-weight:500}
+
+/* FORMS & TABS */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fg{display:flex;flex-direction:column;gap:4px}.fg.full{grid-column:1/-1}
+label{font-size:11px;font-weight:500;color:var(--text2)}
+input,select,textarea{background:var(--white);border:1.5px solid var(--border2);border-radius:7px;padding:8px 11px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);outline:none;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+textarea{resize:vertical;min-height:72px}
+.tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:18px}
+.tab{padding:9px 16px;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px}
+.tab.active{color:var(--navy);border-bottom-color:var(--gold)}
+.tab-content{display:none}.tab-content.active{display:block}
+
+/* MISC UI */
+.dpe{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:5px;font-size:11px;font-weight:700;color:#fff}
+.dpe-A{background:#00a74a}.dpe-B{background:#52b153}.dpe-C{background:#a0c940;color:#333}.dpe-D{background:#f5c400;color:#333}.dpe-E{background:#f09600}.dpe-F{background:#e85d00}.dpe-G{background:#c40000}
+.pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px}
+.pill-g{background:var(--sbg);color:var(--success)}.pill-r{background:var(--dbg);color:var(--danger)}.pill-a{background:var(--wbg);color:var(--warn)}
+.alert-item{display:flex;gap:10px;align-items:center;padding:11px 16px;border-bottom:1px solid var(--border)}
+.alert-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,41,.6);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px}
+.modal-overlay.hidden{display:none}
+.modal{background:var(--white);border-radius:14px;padding:22px;width:100%;max-width:500px;box-shadow:var(--sh2);max-height:88vh;overflow-y:auto}
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--r);padding:28px;text-align:center;cursor:pointer;background:var(--cream)}
+.upload-zone:hover{border-color:var(--gold);background:var(--gold-bg)}
+.result-box{background:var(--cream);border:1px solid var(--border);border-radius:var(--r);padding:18px;font-size:12px;line-height:1.85;white-space:pre-wrap;max-height:460px;overflow-y:auto;margin-top:14px}
+.loading-box{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--ibg);border:1px solid #b0d0f0;border-radius:var(--r);font-size:12px;color:var(--info)}
+.spin{width:16px;height:16px;border:2px solid #b0d0f0;border-top-color:var(--info);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div style="font-size:48px;margin-bottom:10px">🏢</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:24px;color:var(--navy);margin-bottom:8px">SyndIA</h2>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:28px">Plateforme SaaS — Espace Gestionnaire</p>
+    
+    <div class="fg" style="text-align:left;margin-bottom:14px">
+      <label>Email professionnel</label>
+      <input id="login-email" type="email" placeholder="jean.dupont@cabinet-syndic.fr">
+    </div>
+    <div class="fg" style="text-align:left;margin-bottom:28px">
+      <label>Mot de passe</label>
+      <input type="password" value="password123">
+    </div>
+    
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;font-size:13px" onclick="login()">Se connecter</button>
+  </div>
+</div>
+
+<div id="app-layout">
+
+<aside>
+  <div class="sb-logo">
+    <div class="logo-row">
+      <div class="logo-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f1729" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
+      <div><div class="logo-text">SyndIA</div><div class="logo-sub">SYNDIC V4</div></div>
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-label">GESTION</div>
+    <div class="nav-item active" onclick="nav('dashboard')"><span class="nav-icon">📊</span><span>Tableau de bord</span></div>
+    <div class="nav-item" onclick="nav('immeubles')"><span class="nav-icon">🏢</span><span>Mes immeubles</span></div>
+    <div class="nav-item" onclick="nav('missions')"><span class="nav-icon">✅</span><span>Tâches & Missions</span></div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-label">IA & RAPPORTS</div>
+    <div class="nav-item" onclick="nav('documents')"><span class="nav-icon">📄</span><span>Analyse Documents</span></div>
+    <div class="nav-item" onclick="nav('rapports')"><span class="nav-icon">📋</span><span>Générateur IA</span></div>
+  </div>
+
+  <div class="sb-footer">
+    <div class="api-btn" onclick="showApiModal()">
+      <div class="api-dot off" id="api-dot"></div>
+      <span class="api-lbl" id="api-lbl">API Anthropic</span>
+    </div>
+    <div style="font-size:10px;color:var(--text3);display:flex;justify-content:space-between;align-items:center;padding:0 4px">
+      <span id="user-display" style="max-width:120px;overflow:hidden;text-overflow:ellipsis"></span>
+      <span style="cursor:pointer;color:var(--danger)" onclick="logout()">Quitter</span>
+    </div>
+  </div>
+</aside>
+
+<main>
+
+<div class="view active" id="view-dashboard">
+  <div class="topbar">
+    <div><div class="topbar-title">Tableau de bord</div><div class="topbar-sub">Vue globale du portefeuille</div></div>
+    <button class="btn btn-gold" onclick="nav('immeubles');setTimeout(showAddModal,100)">+ Immeuble</button>
+  </div>
+  <div class="view-scroll"><div class="content">
+    <div class="stats-row">
+      <div class="stat"><div class="stat-label">IMMEUBLES</div><div class="stat-val" id="s-total">0</div></div>
+      <div class="stat"><div class="stat-label">TÂCHES EN COURS</div><div class="stat-val" id="s-missions">0</div></div>
+      <div class="stat"><div class="stat-label">PPT À FAIRE</div><div class="stat-val" id="s-ppt">0</div></div>
+    </div>
+    <div class="card"><div class="card-header"><span class="card-title">Mes Immeubles (Cliquez pour entrer)</span></div>
+      <div id="dash-table"></div>
+    </div>
+  </div></div>
+</div>
+
+<div class="view" id="view-immeubles">
+  <div class="topbar">
+    <div><div class="topbar-title">Mes immeubles</div></div>
+    <button class="btn btn-gold" onclick="showAddModal()">+ Ajouter</button>
+  </div>
+  <div class="view-scroll"><div class="content">
+    <div class="card"><div id="imm-table"></div></div>
+  </div></div>
+</div>
+
+<div class="view" id="view-immeuble-detail">
+  <div class="topbar" style="background:var(--cream);border-bottom:none;padding-bottom:0">
+    <button class="btn btn-ghost btn-sm" onclick="nav('immeubles')">← Retour</button>
+    <div style="margin-left:14px;flex:1">
+      <div class="topbar-title" id="det-nom" style="font-size:24px">Nom Immeuble</div>
+      <div class="topbar-sub" id="det-adr" style="font-size:12px;color:var(--text2)">Adresse</div>
+    </div>
+    <button class="btn btn-gold" onclick="nav('rapports')">Générer Rapport IA</button>
+  </div>
+  <div class="view-scroll"><div class="content">
+    <div class="stats-row" style="margin-bottom:16px">
+      <div class="stat"><div class="stat-label">DPE</div><div class="stat-val" id="det-dpe">-</div></div>
+      <div class="stat"><div class="stat-label">LOTS</div><div class="stat-val" id="det-lots">-</div></div>
+      <div class="stat"><div class="stat-label">CHAUFFAGE</div><div class="stat-val" style="font-size:16px;margin-top:8px" id="det-chauf">-</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card">
+        <div class="card-header"><span class="card-title">🚨 Alertes réglementaires</span></div>
+        <div class="card-body" id="det-alerts" style="padding:0"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">✅ Missions associées</span><button class="btn btn-ghost btn-sm" onclick="showMissionModal()">+ Ajouter</button></div>
+        <div class="card-body" id="det-missions" style="padding:0"></div>
+      </div>
+    </div>
+  </div></div>
+</div>
+
+<div class="view" id="view-missions">
+  <div class="topbar">
+    <div><div class="topbar-title">Missions & Tâches</div></div>
+    <button class="btn btn-gold" onclick="showMissionModal()">+ Nouvelle Tâche</button>
+  </div>
+  <div class="view-scroll"><div class="content">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card"><div class="card-header"><span class="card-title">⏳ À Faire</span></div><div class="card-body" id="missions-todo" style="display:flex;flex-direction:column;gap:10px"></div></div>
+      <div class="card"><div class="card-header"><span class="card-title">✅ Terminé</span></div><div class="card-body" id="missions-done" style="display:flex;flex-direction:column;gap:10px;opacity:0.7"></div></div>
+    </div>
+  </div></div>
+</div>
+
+<div class="view" id="view-documents">
+  <div class="topbar"><div class="topbar-title">Analyse IA de Documents</div></div>
+  <div class="view-scroll"><div class="content">
+    <div class="tabs" id="tabs-doc">
+      <div class="tab active" onclick="switchDocTab('reglement')">📜 Règlement copropriété</div>
+      <div class="tab" onclick="switchDocTab('devis')">⚖️ Comparateur Devis</div>
+      <div class="tab" onclick="switchDocTab('contrats')">🤝 Audit Contrats</div>
+    </div>
+
+    <div class="tab-content active" id="dtab-reglement">
+      <div class="card"><div class="card-body">
+        <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Déposez le règlement (PDF). L'IA extrait : lots, tantièmes, règles spécifiques.</p>
+        <div class="upload-zone" id="reg-zone" onclick="document.getElementById('reg-inp').click()"><input type="file" id="reg-inp" style="display:none" accept=".pdf" onchange="analyzeDoc(this,'reg')"><div style="font-size:32px">📜</div><div style="font-size:13px;font-weight:600;margin-top:8px">Glissez le règlement PDF ici</div></div>
+        <div id="reg-load" style="display:none;margin-top:14px" class="loading-box"><div class="spin"></div>Analyse du règlement...</div>
+        <div id="reg-res" style="display:none"><div class="result-box" id="reg-txt"></div></div>
+      </div></div>
+    </div>
+
+    <div class="tab-content" id="dtab-devis">
+      <div class="card"><div class="card-body">
+        <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Importez 2 à 3 devis (PDF). L'IA va aligner et comparer les lignes de prix.</p>
+        <div class="upload-zone" onclick="document.getElementById('dev-inp').click()"><input type="file" id="dev-inp" style="display:none" accept=".pdf" multiple onchange="analyzeDevis(this)"><div style="font-size:32px">⚖️</div><div style="font-size:13px;font-weight:600;margin-top:8px">Glissez vos devis ici</div></div>
+        <div id="dev-load" style="display:none;margin-top:14px" class="loading-box"><div class="spin"></div>Comparaison en cours...</div>
+        <div id="dev-res" style="display:none"><div class="result-box" id="dev-txt"></div></div>
+      </div></div>
+    </div>
+
+    <div class="tab-content" id="dtab-contrats">
+      <div class="card"><div class="card-body">
+        <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Déposez un contrat. L'IA extrait le préavis et calcule la date limite de résiliation.</p>
+        <div class="upload-zone" onclick="document.getElementById('con-inp').click()"><input type="file" id="con-inp" style="display:none" accept=".pdf" onchange="analyzeDoc(this,'con')"><div style="font-size:32px">🤝</div><div style="font-size:13px;font-weight:600;margin-top:8px">Glissez le contrat PDF ici</div></div>
+        <div id="con-load" style="display:none;margin-top:14px" class="loading-box"><div class="spin"></div>Audit des clauses...</div>
+        <div id="con-res" style="display:none"><div class="result-box" id="con-txt"></div></div>
+      </div></div>
+    </div>
+  </div></div>
+</div>
+
+<div class="view" id="view-rapports">
+  <div class="topbar"><div class="topbar-title">Générateur de Rapports IA</div></div>
+  <div class="view-scroll"><div class="content">
+    <div class="tabs" id="tabs-rap">
+      <div class="tab active" onclick="switchRapTab('ppt')">📋 Plan PPT</div>
+      <div class="tab" onclick="switchRapTab('courrier')">✉️ Courrier type</div>
+    </div>
+
+    <div class="tab-content active" id="rtab-ppt">
+      <div class="card"><div class="card-body">
+        <div class="form-grid">
+          <div class="fg full"><label>Copropriété</label><input id="ppt-adr" placeholder="15 av. du Soleil, 13100 Aix"></div>
+          <div class="fg"><label>Lots</label><input id="ppt-lots" type="number" placeholder="24"></div>
+          <div class="fg"><label>DPE</label><select id="ppt-dpe"><option>A</option><option>D</option><option>F</option></select></div>
+        </div>
+        <button class="btn btn-gold" style="margin-top:14px" onclick="genReport('ppt')">✦ Générer PPT</button>
+        <div id="ppt-load" style="display:none;margin-top:12px" class="loading-box"><div class="spin"></div>Génération...</div>
+        <div id="ppt-res" style="display:none"><div class="result-box" id="ppt-txt"></div></div>
+      </div></div>
+    </div>
+
+    <div class="tab-content" id="rtab-courrier">
+      <div class="card"><div class="card-body">
+        <div class="form-grid">
+          <div class="fg"><label>Destinataire</label><input id="co-dest" placeholder="M. Dupont"></div>
+          <div class="fg"><label>Objet</label><input id="co-obj" placeholder="Mise en demeure"></div>
+        </div>
+        <button class="btn btn-gold" style="margin-top:14px" onclick="genReport('courrier')">✦ Générer Courrier</button>
+        <div id="co-load" style="display:none;margin-top:12px" class="loading-box"><div class="spin"></div>Rédaction...</div>
+        <div id="co-res" style="display:none"><div class="result-box" id="co-txt"></div></div>
+      </div></div>
+    </div>
+  </div></div>
+</div>
+
+</main>
+</div>
+
+<div class="modal-overlay hidden" id="api-modal">
+  <div class="modal" style="max-width:400px;text-align:center">
+    <div style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:6px">Clé API Anthropic</div>
+    <input type="password" id="api-inp" placeholder="sk-ant-..." style="text-align:center;font-family:monospace;margin-bottom:12px">
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="saveKey()">Sauvegarder</button>
+    <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="closeM('api-modal')">Annuler</button>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="add-modal">
+  <div class="modal">
+    <div class="modal-title">Ajouter un immeuble</div>
+    <div class="form-grid">
+      <div class="fg full"><label>Nom</label><input id="i-nom" placeholder="Résidence Les Oliviers"></div>
+      <div class="fg"><label>DPE</label><select id="i-dpe"><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option></select></div>
+      <div class="fg"><label>PPT</label><select id="i-ppt"><option value="non">À faire</option><option value="oui">Établi</option></select></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeM('add-modal')">Annuler</button><button class="btn btn-gold" onclick="saveImm()">Enregistrer</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="mission-modal">
+  <div class="modal">
+    <div class="modal-title">Nouvelle Mission</div>
+    <div class="form-grid">
+      <div class="fg full"><label>Titre de la tâche</label><input id="m-titre" placeholder="Ex: Relancer devis toiture"></div>
+      <div class="fg full"><label>Immeuble concerné (Optionnel)</label><select id="m-imm"><option value="">-- Aucun --</option></select></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeM('mission-modal')">Annuler</button><button class="btn btn-gold" onclick="saveMission()">Enregistrer</button></div>
+  </div>
+</div>
+
+<script>
+// ═══ DATABASE SIMULATION (MULTI-TENANT) ═══
+let currentUser = null;
+let immeubles = [];
+let missions = [];
+let apiKey = '';
+
+function login() {
+  const email = document.getElementById('login-email').value;
+  if(!email) return;
+  currentUser = email;
+  localStorage.setItem('syndia_session', email);
+  
+  // Load data SPECIFIC to this user
+  const raw = localStorage.getItem('syndia_db_' + email);
+  const db = raw ? JSON.parse(raw) : { immeubles: [], missions: [], apiKey: '' };
+  immeubles = db.immeubles || [];
+  missions = db.missions || [];
+  apiKey = db.apiKey || '';
+
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-layout').style.display = 'flex';
+  document.getElementById('user-display').textContent = email;
+  
+  updateApi();
+  nav('dashboard');
+}
+
+function logout() {
+  localStorage.removeItem('syndia_session');
+  location.reload();
+}
+
+function saveDB() {
+  if(!currentUser) return;
+  localStorage.setItem('syndia_db_' + currentUser, JSON.stringify({ immeubles, missions, apiKey }));
+}
+
+// Check session on load
+window.onload = () => {
+  const session = localStorage.getItem('syndia_session');
+  if(session) {
+    document.getElementById('login-email').value = session;
+    login();
+  }
+};
+
+// ═══ NAVIGATION PRINCIPALE ═══
+function nav(v) {
+  document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+  
+  const target = document.getElementById('view-'+v);
+  if(target) target.classList.add('active');
+  
+  // Activer le bon bouton du menu
+  let activeMenu = v === 'immeuble-detail' ? 'immeubles' : v;
+  const idx = ['dashboard','immeubles','missions','documents','rapports'].indexOf(activeMenu);
+  if(idx !== -1) document.querySelectorAll('.nav-item')[idx]?.classList.add('active');
+
+  // Rendu spécifique
+  if(v==='dashboard') renderDash();
+  if(v==='immeubles') renderImm();
+  if(v==='missions') renderMissions();
+}
+
+// ═══ CORRECTION DES ONGLETS (TABS) ═══
+function switchDocTab(t) {
+  const all = ['reglement', 'devis', 'contrats'];
+  const tabs = document.getElementById('tabs-doc').querySelectorAll('.tab');
+  all.forEach((x, i) => {
+    tabs[i].classList.toggle('active', x === t);
+    document.getElementById('dtab-'+x).classList.toggle('active', x === t);
+  });
+}
+
+function switchRapTab(t) {
+  const all = ['ppt', 'courrier'];
+  const tabs = document.getElementById('tabs-rap').querySelectorAll('.tab');
+  all.forEach((x, i) => {
+    tabs[i].classList.toggle('active', x === t);
+    document.getElementById('rtab-'+x).classList.toggle('active', x === t);
+  });
+}
+
+// ═══ ROUTING : FICHE IMMEUBLE (DÉTAILS) ═══
+function navToBuilding(id) {
+  const i = immeubles.find(x => x.id === id);
+  if(!i) return;
+  
+  document.getElementById('det-nom').textContent = i.nom;
+  document.getElementById('det-dpe').textContent = i.dpe;
+  
+  // Alertes de l'immeuble
+  let alHtml = '';
+  if(i.ppt === 'non') alHtml += `<div class="alert-item"><div class="alert-dot" style="background:var(--danger)"></div><div style="font-size:12px">PPT Manquant (Urgent)</div></div>`;
+  if(['F','G'].includes(i.dpe)) alHtml += `<div class="alert-item"><div class="alert-dot" style="background:var(--danger)"></div><div style="font-size:12px">Passoire thermique (DPE ${i.dpe})</div></div>`;
+  document.getElementById('det-alerts').innerHTML = alHtml || '<div style="padding:16px;font-size:12px;color:var(--text3)">Aucune alerte</div>';
+  
+  // Missions de l'immeuble
+  const immMissions = missions.filter(m => m.immId === id);
+  document.getElementById('det-missions').innerHTML = immMissions.length ? immMissions.map(m => `<div class="alert-item"><input type="checkbox" ${m.done?'checked':''} onchange="toggleMission('${m.id}')" style="margin-right:8px"><div style="font-size:12px;text-decoration:${m.done?'line-through':''}">${m.titre}</div></div>`).join('') : '<div style="padding:16px;font-size:12px;color:var(--text3)">Aucune tâche</div>';
+  
+  nav('immeuble-detail');
+}
+
+// ═══ VUES & COMPOSANTS ═══
+function renderDash() {
+  document.getElementById('s-total').textContent = immeubles.length;
+  document.getElementById('s-missions').textContent = missions.filter(m=>!m.done).length;
+  document.getElementById('s-ppt').textContent = immeubles.filter(i=>i.ppt==='non').length;
+  
+  const tbl = document.getElementById('dash-table');
+  if(!immeubles.length) { tbl.innerHTML = '<div style="padding:20px;text-align:center;font-size:12px;color:var(--text3)">Aucun immeuble</div>'; return; }
+  
+  tbl.innerHTML = `<table><thead><tr><th>Copropriété</th><th>DPE</th><th>PPT</th></tr></thead><tbody>${immeubles.map(i => `
+    <tr onclick="navToBuilding('${i.id}')">
+      <td>${i.nom}</td>
+      <td><span class="dpe dpe-${i.dpe}">${i.dpe}</span></td>
+      <td><span class="pill ${i.ppt==='oui'?'pill-g':'pill-r'}">${i.ppt==='oui'?'OK':'À faire'}</span></td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+function renderImm() {
+  const tbl = document.getElementById('imm-table');
+  if(!immeubles.length) { tbl.innerHTML = '<div style="padding:20px;text-align:center;font-size:12px;color:var(--text3)">Aucun immeuble</div>'; return; }
+  tbl.innerHTML = `<table><thead><tr><th>Copropriété</th><th>DPE</th><th>Actions</th></tr></thead><tbody>${immeubles.map(i => `
+    <tr>
+      <td onclick="navToBuilding('${i.id}')">${i.nom}</td>
+      <td onclick="navToBuilding('${i.id}')"><span class="dpe dpe-${i.dpe}">${i.dpe}</span></td>
+      <td><button class="btn btn-danger btn-sm" onclick="delImm('${i.id}')">Supprimer</button></td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+// ═══ ACTIONS DB ═══
+function showAddModal() { document.getElementById('add-modal').classList.remove('hidden'); }
+function closeM(id) { document.getElementById(id).classList.add('hidden'); }
+
+function saveImm() {
+  immeubles.push({
+    id: Date.now().toString(),
+    nom: document.getElementById('i-nom').value || 'Nouvel Immeuble',
+    dpe: document.getElementById('i-dpe').value,
+    ppt: document.getElementById('i-ppt').value
+  });
+  saveDB(); closeM('add-modal'); renderDash(); renderImm();
+}
+function delImm(id) { immeubles = immeubles.filter(i=>i.id!==id); saveDB(); renderImm(); renderDash(); }
+
+function showMissionModal() {
+  const sel = document.getElementById('m-imm');
+  sel.innerHTML = '<option value="">-- Aucun --</option>' + immeubles.map(i => `<option value="${i.id}">${i.nom}</option>`).join('');
+  document.getElementById('mission-modal').classList.remove('hidden');
+}
+function saveMission() {
+  missions.push({ id: Date.now().toString(), titre: document.getElementById('m-titre').value, immId: document.getElementById('m-imm').value, done: false });
+  saveDB(); closeM('mission-modal'); renderMissions(); renderDash();
+}
+function toggleMission(id) {
+  const m = missions.find(x=>x.id===id); if(m) m.done = !m.done;
+  saveDB(); renderMissions(); renderDash();
+  if(document.getElementById('view-immeuble-detail').classList.contains('active')) navToBuilding(m.immId);
+}
+function renderMissions() {
+  const todo = missions.filter(m=>!m.done); const done = missions.filter(m=>m.done);
+  const html = (m) => `<div class="alert-item"><input type="checkbox" ${m.done?'checked':''} onchange="toggleMission('${m.id}')"><div style="flex:1;font-size:12px;text-decoration:${m.done?'line-through':''}">${m.titre}</div><button class="btn btn-ghost btn-sm" onclick="missions=missions.filter(x=>x.id!=='${m.id}');saveDB();renderMissions()">🗑</button></div>`;
+  document.getElementById('missions-todo').innerHTML = todo.length ? todo.map(html).join('') : '<div style="padding:16px;font-size:12px;color:var(--text3)">Rien à faire !</div>';
+  document.getElementById('missions-done').innerHTML = done.length ? done.map(html).join('') : '';
+}
+
+// ═══ API & IA SIMULATION ═══
+function showApiModal() { document.getElementById('api-modal').classList.remove('hidden'); }
+function saveKey() { apiKey = document.getElementById('api-inp').value; saveDB(); updateApi(); closeM('api-modal'); }
+function updateApi() { document.getElementById('api-dot').className = 'api-dot '+(apiKey?'ok':'off'); document.getElementById('api-lbl').textContent = apiKey ? 'IA Connectée' : 'API Manquante'; }
+
+async function simulateAI(resultId, loadId) {
+  if(!apiKey) { showApiModal(); return; }
+  document.getElementById(loadId).style.display = 'block';
+  document.getElementById(resultId).style.display = 'none';
+  setTimeout(() => { // Simulation d'appel API de 2s
+    document.getElementById(loadId).style.display = 'none';
+    document.getElementById(resultId).style.display = 'block';
+    document.getElementById(resultId.replace('res','txt')).innerHTML = "<strong>Résultat IA généré.</strong><br><br>Dans la vraie version Next.js, c'est ici que l'appel API serveur sécurisé retourne l'analyse complète (Contrat, PPT, ou Devis).";
+  }, 1500);
+}
+function analyzeDoc(inp, prefix) { if(inp.files.length) simulateAI(prefix+'-res', prefix+'-load'); }
+function analyzeDevis(inp) { if(inp.files.length>1) simulateAI('dev-res', 'dev-load'); else alert('Sélectionnez au moins 2 devis'); }
+function genReport(type) { simulateAI(type==='ppt'?'ppt-res':'co-res', type==='ppt'?'ppt-load':'co-load'); }
+</script>
+</body>
+</html>
