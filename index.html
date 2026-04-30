@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SyndIA V2 — Copilote IA Syndic</title>
+<title>SyndIA V3 — Copilote IA Syndic</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -111,9 +111,10 @@ textarea{resize:vertical;min-height:72px}
 .tab-content{display:none}.tab-content.active{display:block}
 
 /* ALERTS */
-.alert-item{display:flex;gap:10px;align-items:flex-start;padding:11px 16px;border-bottom:1px solid var(--border)}
+.alert-item{display:flex;gap:10px;align-items:center;padding:11px 16px;border-bottom:1px solid var(--border)}
 .alert-item:last-child{border-bottom:none}
-.alert-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.alert-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.alert-body{flex:1;}
 .alert-title{font-size:12px;font-weight:500;color:var(--text);margin-bottom:1px}
 .alert-sub{font-size:11px;color:var(--text3)}
 
@@ -187,10 +188,6 @@ textarea{resize:vertical;min-height:72px}
 .empty-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:5px}
 .empty-sub{font-size:12px;color:var(--text3);margin-bottom:16px}
 
-/* PROGRESS */
-.progress-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:4px}
-.progress-fill{height:100%;border-radius:3px;transition:width .4s}
-
 /* LOADING */
 .loading-box{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--ibg);border:1px solid #b0d0f0;border-radius:var(--r);font-size:12px;color:var(--info)}
 .spin{width:16px;height:16px;border:2px solid #b0d0f0;border-top-color:var(--info);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
@@ -208,7 +205,7 @@ textarea{resize:vertical;min-height:72px}
       <div class="logo-icon">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f1729" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
       </div>
-      <div><div class="logo-text">SyndIA</div><div class="logo-sub">COPILOTE SYNDIC V2</div></div>
+      <div><div class="logo-text">SyndIA</div><div class="logo-sub">COPILOTE SYNDIC V3</div></div>
     </div>
   </div>
 
@@ -217,6 +214,7 @@ textarea{resize:vertical;min-height:72px}
     <div class="nav-item active" onclick="nav('dashboard')"><span class="nav-icon">📊</span><span>Tableau de bord</span></div>
     <div class="nav-item" onclick="nav('immeubles')"><span class="nav-icon">🏢</span><span>Mes immeubles</span></div>
     <div class="nav-item" onclick="nav('agenda')"><span class="nav-icon">📅</span><span>Calendrier AG</span><span class="nav-badge gold" id="badge-agenda">0</span></div>
+    <div class="nav-item" onclick="nav('missions')"><span class="nav-icon">✅</span><span>Missions & Tâches</span></div>
   </div>
 
   <div class="sb-section">
@@ -284,6 +282,29 @@ textarea{resize:vertical;min-height:72px}
   </div></div>
 </div>
 
+<div class="view" id="view-missions">
+  <div class="topbar">
+    <div><div class="topbar-title">Missions & Tâches</div><div class="topbar-sub">Transformez vos alertes en actions concrètes pour l'équipe</div></div>
+    <button class="btn btn-gold" onclick="showMissionModal()">+ Nouvelle Tâche</button>
+  </div>
+  <div class="view-scroll"><div class="content">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="card">
+        <div class="card-header"><span class="card-title">⏳ À Faire</span></div>
+        <div class="card-body" id="missions-todo" style="display:flex;flex-direction:column;gap:10px;">
+          <div class="empty-sub">Aucune tâche en cours</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">✅ Terminé</span></div>
+        <div class="card-body" id="missions-done" style="display:flex;flex-direction:column;gap:10px;opacity:0.7">
+          <div class="empty-sub">Aucune tâche terminée</div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+</div>
+
 <div class="view" id="view-documents">
   <div class="topbar">
     <div><div class="topbar-title">Import & Analyse de documents</div><div class="topbar-sub">L'IA lit vos PDF et extrait automatiquement les informations clés</div></div>
@@ -294,6 +315,7 @@ textarea{resize:vertical;min-height:72px}
       <div class="tab" onclick="switchDocTab('pv')">📋 PV d'Assemblée Générale</div>
       <div class="tab" onclick="switchDocTab('carnet')">🔧 Carnet d'entretien</div>
       <div class="tab" onclick="switchDocTab('devis')">⚖️ Comparateur Devis</div>
+      <div class="tab" onclick="switchDocTab('contrats')">🤝 Contrats & Échéances</div>
     </div>
 
     <div class="tab-content active" id="dtab-reglement">
@@ -358,7 +380,7 @@ textarea{resize:vertical;min-height:72px}
         </div>
       </div></div>
     </div>
-    
+
     <div class="tab-content" id="dtab-devis">
       <div class="card"><div class="card-body">
         <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Importez 2 à 3 devis (PDF) pour les mêmes travaux (ex: Ravalement). L'IA va extraire les montants, les prestations incluses/exclues et générer un tableau comparatif neutre pour l'Assemblée Générale.</p>
@@ -378,7 +400,31 @@ textarea{resize:vertical;min-height:72px}
         </div>
       </div></div>
     </div>
-    
+
+    <div class="tab-content" id="dtab-contrats">
+      <div class="card"><div class="card-body">
+        <div style="background:var(--wbg);border:1px solid #f0d090;border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--warn);line-height:1.6">
+          💡 <strong>L'arme anti tacite-reconduction :</strong> Déposez un contrat prestataire (nettoyage, ascenseur, assurance). L'IA extrait le préavis et calcule la date limite exacte pour envoyer votre recommandé de résiliation.
+        </div>
+        <div class="upload-zone" id="contrat-zone" onclick="document.getElementById('contrat-input').click()" ondragover="dragOver(event,'contrat-zone')" ondragleave="dragLeave('contrat-zone')" ondrop="dropFile(event,'contrat-input','contrat-zone')">
+          <input type="file" id="contrat-input" class="upload-input" accept=".pdf" onchange="analyzeContrat(this)">
+          <div class="upload-icon">🤝</div>
+          <div class="upload-title">Glissez un contrat ici (PDF)</div>
+          <div class="upload-sub">Recherche automatique des clauses d'échéance et de révision de prix</div>
+        </div>
+        <div id="contrat-loading" style="display:none;margin-top:14px">
+          <div class="loading-box"><div class="spin"></div>Lecture des clauses juridiques et calcul des dates…</div>
+        </div>
+        <div id="contrat-result" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;margin-bottom:8px">
+            <span style="font-size:12px;font-weight:600;color:var(--success)">✓ Contrat audité avec succès</span>
+            <button class="btn btn-ghost btn-sm" onclick="copyResult('contrat-content')">Copier le résumé</button>
+          </div>
+          <div class="result-box" id="contrat-content"></div>
+        </div>
+      </div></div>
+    </div>
+
   </div></div>
 </div>
 
@@ -603,11 +649,34 @@ textarea{resize:vertical;min-height:72px}
   </div>
 </div>
 
+<div class="modal-overlay hidden" id="mission-modal">
+  <div class="modal">
+    <div class="modal-title">Créer une Mission</div>
+    <div class="form-grid">
+      <div class="fg full"><label>Description de la tâche</label><input id="m-titre" placeholder="Ex: Demander 3 devis pour la toiture..."></div>
+      <div class="fg"><label>Assigné à</label>
+        <select id="m-assign">
+          <option>Moi-même</option>
+          <option>Comptabilité</option>
+          <option>Assistant(e)</option>
+          <option>Gestionnaire technique</option>
+        </select>
+      </div>
+      <div class="fg"><label>Échéance</label><input id="m-date" type="date"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeM('mission-modal')">Annuler</button>
+      <button class="btn btn-gold" onclick="saveMission()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ═══ STATE ═══════════════════════════════════════════════════════════════════
 let apiKey = localStorage.getItem('syndia_k') || '';
 let immeubles = JSON.parse(localStorage.getItem('syndia_imm') || '[]');
 let agendas = JSON.parse(localStorage.getItem('syndia_ag') || '[]');
+let missions = JSON.parse(localStorage.getItem('syndia_missions') || '[]');
 let chatHist = [];
 let editId = null;
 let lastRegData = null;
@@ -629,6 +698,7 @@ window.onload = () => {
   renderDash();
   renderImm();
   renderAgenda();
+  renderMissions();
   renderAlertes();
   document.getElementById('dash-date').textContent = new Date().toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   document.getElementById('ag-date').value = new Date(Date.now()+30*86400000).toISOString().split('T')[0];
@@ -640,11 +710,12 @@ function nav(v) {
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
-  const idx = ['dashboard','immeubles','agenda','documents','assistant','rapports','energie','alertes'].indexOf(v);
+  const idx = ['dashboard','immeubles','agenda','missions','documents','assistant','rapports','energie','alertes'].indexOf(v);
   document.querySelectorAll('.nav-item')[idx]?.classList.add('active');
   if(v==='immeubles') renderImm();
   if(v==='dashboard') renderDash();
   if(v==='agenda') renderAgenda();
+  if(v==='missions') renderMissions();
   if(v==='alertes') renderAlertes();
 }
 
@@ -689,6 +760,58 @@ async function callAIDoc(pdfB64,prompt,max=3000) {
   const d=await r.json();
   if(d.error)throw new Error(d.error.message);
   return d.content[0].text;
+}
+
+// ═══ MISSIONS & TÂCHES ════════════════════════════════════════════════════════
+function showMissionModal(titre=''){
+  document.getElementById('m-titre').value = titre;
+  document.getElementById('m-date').value = new Date(Date.now()+7*86400000).toISOString().split('T')[0];
+  document.getElementById('mission-modal').classList.remove('hidden');
+}
+
+function saveMission(){
+  const m = {
+    id: Date.now().toString(),
+    titre: document.getElementById('m-titre').value,
+    assign: document.getElementById('m-assign').value,
+    date: document.getElementById('m-date').value,
+    done: false
+  };
+  if(!m.titre) return;
+  missions.push(m);
+  localStorage.setItem('syndia_missions', JSON.stringify(missions));
+  closeM('mission-modal');
+  renderMissions();
+}
+
+function toggleMission(id){
+  const m = missions.find(x=>x.id===id);
+  if(m) { 
+    m.done = !m.done; 
+    localStorage.setItem('syndia_missions', JSON.stringify(missions)); 
+    renderMissions(); 
+  }
+}
+
+function renderMissions(){
+  const todo = missions.filter(m=>!m.done);
+  const done = missions.filter(m=>m.done);
+  
+  const renderItem = (m) => `
+    <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;align-items:flex-start;gap:10px;box-shadow:var(--sh);">
+      <input type="checkbox" ${m.done?'checked':''} onchange="toggleMission('${m.id}')" style="margin-top:2px;width:16px;height:16px;accent-color:var(--gold);cursor:pointer;">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;text-decoration:${m.done?'line-through':''}">${m.titre}</div>
+        <div style="display:flex;gap:6px;font-size:10px;">
+          <span style="background:var(--ibg);color:var(--info);padding:3px 8px;border-radius:10px;font-weight:600">👤 ${m.assign}</span>
+          <span style="background:${new Date(m.date) < new Date() && !m.done ? 'var(--dbg)' : 'var(--wbg)'};color:${new Date(m.date) < new Date() && !m.done ? 'var(--danger)' : 'var(--warn)'};padding:3px 8px;border-radius:10px;font-weight:600">📅 ${new Date(m.date).toLocaleDateString('fr-FR')}</span>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="if(confirm('Supprimer cette tâche ?')) { missions=missions.filter(x=>x.id!=='${m.id}');localStorage.setItem('syndia_missions',JSON.stringify(missions));renderMissions(); }">🗑</button>
+    </div>`;
+
+  document.getElementById('missions-todo').innerHTML = todo.length ? todo.map(renderItem).join('') : '<div style="text-align:center;padding:20px;color:var(--text3);font-size:12px">Aucune tâche en cours 🎉</div>';
+  document.getElementById('missions-done').innerHTML = done.length ? done.map(renderItem).join('') : '<div style="text-align:center;padding:20px;color:var(--text3);font-size:12px">Rien de terminé... au boulot !</div>';
 }
 
 // ═══ IMMEUBLES ════════════════════════════════════════════════════════════════
@@ -761,7 +884,7 @@ function renderAgenda(){
   badge.style.display=(urgents.length||upcoming.length)?'inline':'none';
 
   const el=document.getElementById('agenda-list');
-  if(!agendas.length){el.innerHTML='<div class="empty"><div class="empty-icon">📅</div><div class="empty-title">Aucune AG planifiée</div><div class="empty-sub">Ajoutez des dates pour suivre les délais légaux</div><button class="btn btn-primary" onclick="showAgModal()">+ Planifier une AG</button></div>';return;}
+  if(!agendas.length){el.innerHTML='<div class="empty"><div class="empty-icon">📅</div><div class="empty-title">Aucune AG planifiée</div><div class="empty-sub">Ajoutez vos dates d'AG pour suivre automatiquement les délais légaux</div><button class="btn btn-primary" onclick="showAgModal()">+ Planifier une AG</button></div>';return;}
 
   el.innerHTML=[...upcoming.map(a=>renderAgCard(a,now,false)),...past.slice(0,3).map(a=>renderAgCard(a,now,true))].join('');
 }
@@ -869,7 +992,18 @@ function renderAlertes(){
   const a=getAlerts();
   const el=document.getElementById('all-alerts');
   if(!a.length){el.innerHTML='<div class="alert-item"><div style="color:var(--text3);font-size:12px;width:100%;text-align:center;padding:20px">Aucune alerte</div></div>';return;}
-  el.innerHTML=a.map(x=>`<div class="alert-item"><div class="alert-dot" style="background:${x.l==='danger'?'var(--danger)':'var(--warn)'}"></div><div class="alert-body"><div class="alert-title">${x.t}</div><div class="alert-sub">${x.s}</div></div><span class="pill ${x.l==='danger'?'pill-r':'pill-a'}">${x.l==='danger'?'Urgent':'Attention'}</span></div>`).join('');
+  el.innerHTML=a.map(x=>`
+    <div class="alert-item">
+      <div class="alert-dot" style="background:${x.l==='danger'?'var(--danger)':'var(--warn)'}"></div>
+      <div class="alert-body">
+        <div class="alert-title">${x.t}</div>
+        <div class="alert-sub">${x.s}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="pill ${x.l==='danger'?'pill-r':'pill-a'}">${x.l==='danger'?'Urgent':'Attention'}</span>
+        <button class="btn btn-ghost btn-sm" onclick="showMissionModal(\`Traiter l'alerte : ${x.t.replace(/`/g, '')}\`)">+ Mission</button>
+      </div>
+    </div>`).join('');
 }
 
 // ═══ DOCUMENT ANALYSIS (PDF) ══════════════════════════════════════════════════
@@ -957,25 +1091,18 @@ Format : rapport d'expertise prêt à présenter en assemblée générale.`,4000
 
 async function analyzeDevis(inp) {
   const files = inp.files;
-  
   if(!files || files.length < 2) {
     alert('Astuce : Veuillez sélectionner au moins 2 devis pour que la comparaison soit utile !');
     return;
   }
-
   document.getElementById('devis-loading').style.display='block';
   document.getElementById('devis-result').style.display='none';
-
   try {
     let documentsArray = [];
     for(let i = 0; i < files.length; i++) {
       const b64 = await readPDF(files[i]);
-      documentsArray.push({
-        type: 'document',
-        source: { type: 'base64', media_type: 'application/pdf', data: b64 }
-      });
+      documentsArray.push({ type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } });
     }
-
     const prompt = `Je te fournis ci-joint plusieurs devis d'artisans pour des travaux dans une copropriété.
 Ton objectif est de créer un tableau comparatif neutre, lisible et exhaustif, prêt à être présenté au conseil syndical.
 
@@ -991,38 +1118,44 @@ Formate le résultat sous forme de tableau Markdown clair.
 Ensuite, ajoute une courte synthèse de 3 lignes expliquant les différences majeures de manière neutre.`;
 
     if(!apiKey) { showApiModal(); throw new Error('No key'); }
-    
     const contentPayload = [...documentsArray, { type: 'text', text: prompt }];
-
     const r = await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key':apiKey,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens: 3000,
-        system: SYS,
-        messages: [{ role: 'user', content: contentPayload }]
-      })
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens: 3000,system: SYS,messages: [{ role: 'user', content: contentPayload }]})
     });
-    
     const d = await r.json();
     if(d.error) throw new Error(d.error.message);
-    
-    const result = d.content[0].text;
-
-    document.getElementById('devis-content').textContent = result;
+    document.getElementById('devis-content').innerHTML = fmt(d.content[0].text);
     document.getElementById('devis-result').style.display='block';
-
-  } catch(e) {
-    alert('Erreur lors de l\'analyse des devis : ' + e.message);
-  }
-  
+  } catch(e) { alert('Erreur lors de l\'analyse des devis : ' + e.message); }
   document.getElementById('devis-loading').style.display='none';
+}
+
+async function analyzeContrat(inp) {
+  const f = inp.files[0]; 
+  if(!f) return;
+  document.getElementById('contrat-loading').style.display='block';
+  document.getElementById('contrat-result').style.display='none';
+  try {
+    const b64 = await readPDF(f);
+    const prompt = `Analyse ce contrat de prestation/maintenance pour une copropriété. Ton objectif de syndic est d'auditer ce contrat pour protéger les copropriétaires.
+
+Extraits les données suivantes sous forme de synthèse claire :
+1. IDENTIFICATION : Nom du prestataire, objet du contrat, date de signature initiale.
+2. CONDITIONS FINANCIÈRES : Montant (HT et TTC), indice de révision tarifaire mentionné (ex: BT01, syntec).
+3. DURÉE ET PRÉAVIS : Durée initiale, durée de tacite reconduction, délai de préavis exigé pour résilier (en mois).
+4. 🚨 DATE LIMITE DE RÉSILIATION : Calcule et mets en évidence la date exacte ou la formule à laquelle le syndic DOIT envoyer le courrier recommandé.
+5. PÉRIMÈTRE D'INTERVENTION : Que couvre exactement ce contrat ?
+6. ⚠️ PIÈGES & EXCLUSIONS : Y a-t-il des exclusions de garantie majeures, des pénalités ou des clauses défavorables au syndicat des copropriétaires ?
+
+Utilise le format Markdown avec des emojis pour rendre la lecture rapide.`;
+
+    const result = await callAIDoc(b64, prompt, 3000);
+    document.getElementById('contrat-content').innerHTML = fmt(result);
+    document.getElementById('contrat-result').style.display='block';
+  } catch(e) { alert('Erreur lors de l\'analyse du contrat : ' + e.message); }
+  document.getElementById('contrat-loading').style.display='none';
 }
 
 function prefillFromReglement(){
@@ -1218,7 +1351,7 @@ async function sendChat(){
 }
 
 // ═══ TABS ═════════════════════════════════════════════════════════════════════
-function switchDocTab(t){switchTab('dtab',t,['reglement','pv','carnet','devis']);}
+function switchDocTab(t){switchTab('dtab',t,['reglement','pv','carnet','devis','contrats']);}
 function switchRapTab(t){switchTab('rtab',t,['ppt','ag','cs','courrier']);}
 function switchTab(prefix,t,all){
   const tabs=document.querySelectorAll('.tab');
