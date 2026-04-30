@@ -104,12 +104,10 @@ input,select,textarea{background:var(--white);border:1.5px solid var(--border2);
 input:focus,select:focus,textarea:focus{border-color:var(--gold)}
 textarea{resize:vertical;min-height:72px}
 
-/* TABS (CORRIGÉS POUR ÉVITER LES BUGS DE CLIC) */
-.tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:18px;overflow-x:auto;}
-.tabs::-webkit-scrollbar { display: none; }
-.tab{padding:9px 16px;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;}
+/* TABS */
+.tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:18px; overflow-x: auto;}
+.tab{padding:9px 16px;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s; white-space: nowrap;}
 .tab.active{color:var(--navy);border-bottom-color:var(--gold)}
-.tab-content{display:none}.tab-content.active{display:block}
 
 /* ALERTS */
 .alert-item{display:flex;gap:10px;align-items:flex-start;padding:11px 16px;border-bottom:1px solid var(--border)}
@@ -158,6 +156,18 @@ textarea{resize:vertical;min-height:72px}
 /* RESULT BOX */
 .result-box{background:var(--cream);border:1px solid var(--border);border-radius:var(--r);padding:18px;font-size:12px;line-height:1.85;color:var(--text);white-space:pre-wrap;max-height:460px;overflow-y:auto;margin-top:14px;font-family:'DM Sans',sans-serif}
 
+/* AG CALENDAR */
+.ag-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--sh)}
+.ag-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ag-name{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.ag-date-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.deadline-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}
+.deadline-row:last-child{border-bottom:none}
+.deadline-icon{font-size:14px;width:20px;flex-shrink:0}
+.deadline-label{font-size:12px;color:var(--text2);flex:1}
+.deadline-date{font-size:11px;font-weight:500}
+.countdown{font-size:10px;padding:1px 6px;border-radius:10px;font-weight:600}
+
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(15,23,41,.5);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px}
 .modal-overlay.hidden{display:none}
@@ -165,16 +175,27 @@ textarea{resize:vertical;min-height:72px}
 .modal-title{font-family:'Playfair Display',serif;font-size:17px;margin-bottom:16px;color:var(--text)}
 .modal-footer{display:flex;gap:7px;justify-content:flex-end;margin-top:16px;padding-top:12px;border-top:1px solid var(--border)}
 
+/* ENERGY ALERT */
+.energy-alert{background:linear-gradient(135deg,var(--dbg),#fff0f0);border:1px solid #f0c0c0;border-radius:var(--r);padding:14px 16px;margin-bottom:12px}
+.energy-alert-title{font-size:13px;font-weight:600;color:var(--danger);margin-bottom:4px}
+.energy-alert-sub{font-size:12px;color:var(--text2);line-height:1.6}
+
 /* EMPTY */
 .empty{text-align:center;padding:40px 20px}
 .empty-icon{font-size:36px;margin-bottom:10px}
 .empty-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:5px}
 .empty-sub{font-size:12px;color:var(--text3);margin-bottom:16px}
 
+/* PROGRESS */
+.progress-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;border-radius:3px;transition:width .4s}
+
 /* LOADING */
 .loading-box{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--ibg);border:1px solid #b0d0f0;border-radius:var(--r);font-size:12px;color:var(--info)}
 .spin{width:16px;height:16px;border:2px solid #b0d0f0;border-top-color:var(--info);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:768px){aside{width:50px}.logo-text,.logo-sub,.nav-item span,.sb-label,.api-lbl{display:none}.nav-item{justify-content:center;padding:9px}.nav-item::before{display:none}.stats-row{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.topbar-title{font-size:16px}.content{padding:14px}}
 </style>
 </head>
 <body>
@@ -186,7 +207,7 @@ textarea{resize:vertical;min-height:72px}
       <div class="logo-icon">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f1729" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
       </div>
-      <div><div class="logo-text">SyndIA</div><div class="logo-sub">COPILOTE SYNDIC</div></div>
+      <div><div class="logo-text">SyndIA</div><div class="logo-sub">COPILOTE SYNDIC V5</div></div>
     </div>
   </div>
 
@@ -194,26 +215,27 @@ textarea{resize:vertical;min-height:72px}
     <div class="sb-label">GESTION</div>
     <div class="nav-item active" onclick="nav('dashboard')"><span class="nav-icon">📊</span><span>Tableau de bord</span></div>
     <div class="nav-item" onclick="nav('immeubles')"><span class="nav-icon">🏢</span><span>Mes immeubles</span></div>
-    <div class="nav-item" onclick="nav('missions')"><span class="nav-icon">✅</span><span>Tâches & Missions</span></div>
+    <div class="nav-item" onclick="nav('agenda')"><span class="nav-icon">📅</span><span>Calendrier AG</span><span class="nav-badge gold" id="badge-agenda">0</span></div>
+    <div class="nav-item" onclick="nav('missions')"><span class="nav-icon">✅</span><span>Missions & Tâches</span></div>
   </div>
 
   <div class="sb-section">
     <div class="sb-label">IA & RAPPORTS</div>
-    <div class="nav-item" onclick="nav('documents')"><span class="nav-icon">📄</span><span>Analyse Documents</span></div>
+    <div class="nav-item" onclick="nav('documents')"><span class="nav-icon">📄</span><span>Import documents</span></div>
     <div class="nav-item" onclick="nav('assistant')"><span class="nav-icon">🤖</span><span>Assistant IA</span></div>
-    <div class="nav-item" onclick="nav('rapports')"><span class="nav-icon">📋</span><span>Générateur IA</span></div>
+    <div class="nav-item" onclick="nav('rapports')"><span class="nav-icon">📋</span><span>Générateur</span></div>
     <div class="nav-item" onclick="nav('energie')"><span class="nav-icon">⚡</span><span>Suivi énergie</span></div>
   </div>
 
   <div class="sb-section">
     <div class="sb-label">SUIVI</div>
-    <div class="nav-item" onclick="nav('alertes')"><span class="nav-icon">🔔</span><span>Alertes</span><span class="nav-badge" id="badge-alertes" style="display:none">0</span></div>
+    <div class="nav-item" onclick="nav('alertes')"><span class="nav-icon">🔔</span><span>Alertes</span><span class="nav-badge" id="badge-alertes">0</span></div>
   </div>
 
   <div class="sb-footer">
     <div class="api-btn" onclick="showApiModal()">
       <div class="api-dot off" id="api-dot"></div>
-      <span class="api-lbl" id="api-lbl">Mode IA : Configurer</span>
+      <span class="api-lbl" id="api-lbl">Configuration IA</span>
     </div>
   </div>
 </aside>
@@ -228,14 +250,23 @@ textarea{resize:vertical;min-height:72px}
   <div class="view-scroll"><div class="content">
     <div class="stats-row">
       <div class="stat"><div class="stat-label">IMMEUBLES</div><div class="stat-val" id="s-total">0</div><div class="stat-sub">Dans le portefeuille</div></div>
-      <div class="stat"><div class="stat-label">TÂCHES EN COURS</div><div class="stat-val" id="s-missions">0</div><div class="stat-sub warn">À traiter</div></div>
-      <div class="stat"><div class="stat-label">PPT À FAIRE</div><div class="stat-val" id="s-ppt">0</div><div class="stat-sub warn">Obligation jan. 2025</div></div>
+      <div class="stat"><div class="stat-label">TÂCHES EN COURS</div><div class="stat-val" id="s-missions">0</div><div class="stat-sub warn">À traiter par l'équipe</div></div>
+      <div class="stat"><div class="stat-label">AG À VENIR</div><div class="stat-val" id="s-ag">0</div><div class="stat-sub" id="s-ag-sub">Dans les 30 prochains jours</div></div>
       <div class="stat"><div class="stat-label">ALERTES ACTIVES</div><div class="stat-val" id="s-alerts">0</div><div class="stat-sub danger" id="s-alerts-sub">Nécessitent attention</div></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 320px;gap:16px">
-      <div class="card"><div class="card-header"><span class="card-title">Portefeuille d'Immeubles</span><button class="btn btn-ghost btn-sm" onclick="nav('immeubles')">Voir tout →</button></div><div id="dash-table"><div class="empty"><div class="empty-icon">🏢</div><div class="empty-title">Aucun immeuble</div><button class="btn btn-primary" onclick="loadDemoData()">🚀 Charger données démo</button></div></div></div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Portefeuille d'Immeubles</span><button class="btn btn-ghost btn-sm" onclick="nav('immeubles')">Voir tout →</button></div>
+        <div id="dash-table">
+          <div class="empty">
+            <div class="empty-icon">🏢</div>
+            <div class="empty-title">Aucun immeuble</div>
+            <button class="btn btn-primary" onclick="loadDemoData()">🚀 Charger données de démonstration</button>
+          </div>
+        </div>
+      </div>
       <div>
-        <div class="card"><div class="card-header"><span class="card-title">🔔 Alertes récentes</span></div><div id="dash-alerts"></div></div>
+        <div class="card"><div class="card-header"><span class="card-title">🔔 Alertes & Réglementation</span></div><div id="dash-alerts"></div></div>
       </div>
     </div>
   </div></div>
@@ -248,6 +279,16 @@ textarea{resize:vertical;min-height:72px}
   </div>
   <div class="view-scroll"><div class="content">
     <div class="card"><div id="imm-table"><div class="empty"><div class="empty-icon">🏢</div><div class="empty-title">Portefeuille vide</div><button class="btn btn-primary" onclick="showAddModal()">+ Premier immeuble</button></div></div></div>
+  </div></div>
+</div>
+
+<div class="view" id="view-agenda">
+  <div class="topbar">
+    <div><div class="topbar-title">Calendrier AG</div><div class="topbar-sub">Suivi des délais légaux (21 jours francs — art. 9 décret 1967)</div></div>
+    <button class="btn btn-gold" onclick="showAgModal()">+ Planifier une AG</button>
+  </div>
+  <div class="view-scroll"><div class="content">
+    <div id="agenda-list"><div class="empty"><div class="empty-icon">📅</div><div class="empty-title">Aucune AG planifiée</div><div class="empty-sub">Ajoutez vos dates d'AG pour suivre automatiquement les délais légaux</div><button class="btn btn-primary" onclick="showAgModal()">+ Planifier une AG</button></div></div>
   </div></div>
 </div>
 
@@ -266,76 +307,118 @@ textarea{resize:vertical;min-height:72px}
 
 <div class="view" id="view-documents">
   <div class="topbar">
-    <div><div class="topbar-title">Analyse IA de Documents</div><div class="topbar-sub">L'IA extrait automatiquement les informations clés de vos PDF</div></div>
+    <div><div class="topbar-title">Import & Analyse de documents</div><div class="topbar-sub">L'IA lit vos PDF et extrait automatiquement les informations clés</div></div>
   </div>
   <div class="view-scroll"><div class="content">
+    
     <div class="tabs" id="tabs-doc">
-      <div class="tab active" onclick="switchDocTab('reglement')">📜 Règlement</div>
-      <div class="tab" onclick="switchDocTab('pv')">📋 PV AG</div>
-      <div class="tab" onclick="switchDocTab('carnet')">🔧 Carnet Entretien</div>
+      <div class="tab active" onclick="switchDocTab('reglement')">📜 Règlement copropriété</div>
+      <div class="tab" onclick="switchDocTab('pv')">📋 PV d'Assemblée Générale</div>
+      <div class="tab" onclick="switchDocTab('carnet')">🔧 Carnet d'entretien</div>
       <div class="tab" onclick="switchDocTab('devis')">⚖️ Comparateur Devis</div>
       <div class="tab" onclick="switchDocTab('contrats')">🤝 Audit Contrats</div>
     </div>
 
-    <div class="dtab-content active" id="dtab-reglement" style="display:block;">
+    <div class="tab-content active" id="dtab-reglement" style="display:block;">
       <div class="card"><div class="card-body">
-        <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Déposez le règlement de copropriété (PDF). L'IA extrait automatiquement : nombre de lots, tantièmes, règles spécifiques d'usage et clauses importantes.</p>
-        <input type="file" id="reg-inp" style="display:none" accept=".pdf" onchange="runAI('reg')">
-        <div class="upload-zone" onclick="document.getElementById('reg-inp').click()">
-          <div class="upload-icon">📜</div><div class="upload-title">Glissez le règlement PDF ici</div>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Déposez le règlement de copropriété (PDF jusqu'à 80 pages). L'IA extrait automatiquement : nombre de lots, tantièmes, règles spécifiques, restrictions d'usage et clauses importantes.</p>
+        <div class="upload-zone" id="reg-zone" onclick="document.getElementById('reg-input').click()" ondragover="dragOver(event,'reg-zone')" ondragleave="dragLeave('reg-zone')" ondrop="dropFile(event,'reg-input','reg-zone')">
+          <input type="file" id="reg-input" class="upload-input" accept=".pdf" onchange="runAI('reg', 'doc')">
+          <div class="upload-icon">📜</div>
+          <div class="upload-title">Glissez le règlement de copropriété ici</div>
+          <div class="upload-sub">ou cliquez pour choisir un fichier PDF</div>
         </div>
         <div id="reg-load" style="display:none;margin-top:14px"><div class="loading-box"><div class="spin"></div>Analyse du document en cours...</div></div>
-        <div id="reg-res" style="display:none"><div class="result-box" id="reg-txt"></div></div>
+        <div id="reg-res" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;margin-bottom:8px">
+            <span style="font-size:12px;font-weight:600;color:var(--success)">✓ Règlement analysé avec succès</span>
+            <button class="btn btn-ghost btn-sm" onclick="copyResult('reg-txt')">Copier</button>
+          </div>
+          <div class="result-box" id="reg-txt"></div>
+        </div>
       </div></div>
     </div>
 
-    <div class="dtab-content" id="dtab-pv" style="display:none;">
+    <div class="tab-content" id="dtab-pv" style="display:none;">
       <div class="card"><div class="card-body">
-        <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Importez le PV de la dernière AG. L'IA extrait les résolutions votées, les travaux décidés et génère un plan de travail.</p>
-        <input type="file" id="pv-inp" style="display:none" accept=".pdf" onchange="runAI('pv')">
-        <div class="upload-zone" onclick="document.getElementById('pv-inp').click()">
-          <div class="upload-icon">📋</div><div class="upload-title">Glissez le PV d'AG ici</div>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Importez le PV de votre dernière AG. L'IA extrait les résolutions votées, les travaux décidés, les budgets approuvés et génère un plan de travail pour l'année en cours.</p>
+        <div class="upload-zone" id="pv-zone" onclick="document.getElementById('pv-input').click()" ondragover="dragOver(event,'pv-zone')" ondragleave="dragLeave('pv-zone')" ondrop="dropFile(event,'pv-input','pv-zone')">
+          <input type="file" id="pv-input" class="upload-input" accept=".pdf" onchange="runAI('pv', 'doc')">
+          <div class="upload-icon">📋</div>
+          <div class="upload-title">Glissez le PV d'AG ici</div>
+          <div class="upload-sub">PDF du procès-verbal de la dernière assemblée générale</div>
         </div>
-        <div id="pv-load" style="display:none;margin-top:14px"><div class="loading-box"><div class="spin"></div>Analyse du PV...</div></div>
-        <div id="pv-res" style="display:none"><div class="result-box" id="pv-txt"></div></div>
+        <div id="pv-load" style="display:none;margin-top:14px"><div class="loading-box"><div class="spin"></div>Analyse du PV — extraction des résolutions...</div></div>
+        <div id="pv-res" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;margin-bottom:8px">
+            <span style="font-size:12px;font-weight:600;color:var(--success)">✓ PV analysé — Plan de travail généré</span>
+            <button class="btn btn-ghost btn-sm" onclick="copyResult('pv-txt')">Copier</button>
+          </div>
+          <div class="result-box" id="pv-txt"></div>
+        </div>
       </div></div>
     </div>
 
-    <div class="dtab-content" id="dtab-carnet" style="display:none;">
+    <div class="tab-content" id="dtab-carnet" style="display:none;">
       <div class="card"><div class="card-body">
-        <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Importez le carnet d'entretien. L'IA génère le plan de travail 2025 avec budgets estimés.</p>
-        <input type="file" id="car-inp" style="display:none" accept=".pdf" onchange="runAI('car')">
-        <div class="upload-zone" onclick="document.getElementById('car-inp').click()">
-          <div class="upload-icon">🔧</div><div class="upload-title">Glissez le carnet d'entretien ici</div>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Importez le carnet d'entretien de l'immeuble. Combiné avec un PV, l'IA génère votre <strong>plan de travail 2025 complet</strong> : priorités, budgets estimés, aides disponibles.</p>
+        <div class="upload-zone" id="carnet-zone" onclick="document.getElementById('car-input').click()" ondragover="dragOver(event,'carnet-zone')" ondragleave="dragLeave('carnet-zone')" ondrop="dropFile(event,'car-input','carnet-zone')">
+          <input type="file" id="car-input" class="upload-input" accept=".pdf" onchange="runAI('car', 'doc')">
+          <div class="upload-icon">🔧</div>
+          <div class="upload-title">Glissez le carnet d'entretien ici</div>
+          <div class="upload-sub">PDF du carnet d'entretien de l'immeuble</div>
         </div>
-        <div id="car-load" style="display:none;margin-top:14px"><div class="loading-box"><div class="spin"></div>Analyse du carnet...</div></div>
-        <div id="car-res" style="display:none"><div class="result-box" id="car-txt"></div></div>
+        <div id="car-load" style="display:none;margin-top:14px"><div class="loading-box"><div class="spin"></div>Analyse du carnet d'entretien…</div></div>
+        <div id="car-res" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;margin-bottom:8px">
+            <span style="font-size:12px;font-weight:600;color:var(--success)">✓ Carnet analysé</span>
+            <button class="btn btn-ghost btn-sm" onclick="copyResult('car-txt')">Copier</button>
+          </div>
+          <div class="result-box" id="car-txt"></div>
+        </div>
       </div></div>
     </div>
 
-    <div class="dtab-content" id="dtab-devis" style="display:none;">
+    <div class="tab-content" id="dtab-devis" style="display:none;">
       <div class="card"><div class="card-body">
-        <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Importez 2 à 3 devis (PDF) pour les mêmes travaux. L'IA extrait, aligne et compare les lignes de prix.</p>
-        <input type="file" id="dev-inp" style="display:none" accept=".pdf" multiple onchange="runAI('dev')">
-        <div class="upload-zone" onclick="document.getElementById('dev-inp').click()">
-          <div class="upload-icon">⚖️</div><div class="upload-title">Glissez 2 ou 3 devis ici</div>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Importez 2 à 3 devis (PDF) pour les mêmes travaux (ex: Ravalement). L'IA va extraire les montants, les prestations incluses/exclues et générer un tableau comparatif neutre.</p>
+        <div class="upload-zone" id="devis-zone" onclick="document.getElementById('dev-input').click()" ondragover="dragOver(event,'devis-zone')" ondragleave="dragLeave('devis-zone')" ondrop="dropFile(event,'dev-input','devis-zone')">
+          <input type="file" id="dev-input" class="upload-input" accept=".pdf" multiple onchange="runAI('dev', 'doc')">
+          <div class="upload-icon">⚖️</div>
+          <div class="upload-title">Glissez vos devis ici (2 ou 3 fichiers)</div>
+          <div class="upload-sub">L'IA va extraire, aligner et comparer les lignes de prix</div>
         </div>
-        <div id="dev-load" style="display:none;margin-top:14px"><div class="loading-box"><div class="spin"></div>Comparaison des offres en cours...</div></div>
-        <div id="dev-res" style="display:none"><div class="result-box" id="dev-txt"></div></div>
+        <div id="dev-load" style="display:none;margin-top:14px"><div class="loading-box"><div class="spin"></div>Analyse croisée des devis en cours…</div></div>
+        <div id="dev-res" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;margin-bottom:8px">
+            <span style="font-size:12px;font-weight:600;color:var(--success)">✓ Tableau comparatif généré</span>
+            <button class="btn btn-ghost btn-sm" onclick="copyResult('dev-txt')">Copier pour l'AG</button>
+          </div>
+          <div class="result-box" id="dev-txt"></div>
+        </div>
       </div></div>
     </div>
 
-    <div class="dtab-content" id="dtab-contrats" style="display:none;">
+    <div class="tab-content" id="dtab-contrats" style="display:none;">
       <div class="card"><div class="card-body">
-        <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Déposez un contrat. L'IA extrait le préavis et calcule la date limite exacte pour résilier.</p>
-        <input type="file" id="con-inp" style="display:none" accept=".pdf" onchange="runAI('con')">
-        <div class="upload-zone" onclick="document.getElementById('con-inp').click()">
-          <div class="upload-icon">🤝</div><div class="upload-title">Glissez le contrat PDF ici</div>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Déposez un contrat prestataire. L'IA extrait le préavis et calcule la date limite exacte pour envoyer votre recommandé de résiliation.</p>
+        <div class="upload-zone" id="contrat-zone" onclick="document.getElementById('con-input').click()" ondragover="dragOver(event,'contrat-zone')" ondragleave="dragLeave('contrat-zone')" ondrop="dropFile(event,'con-input','contrat-zone')">
+          <input type="file" id="con-input" class="upload-input" accept=".pdf" onchange="runAI('con', 'doc')">
+          <div class="upload-icon">🤝</div>
+          <div class="upload-title">Glissez un contrat ici (PDF)</div>
+          <div class="upload-sub">Recherche automatique des clauses d'échéance et de révision de prix</div>
         </div>
-        <div id="con-load" style="display:none;margin-top:14px"><div class="loading-box"><div class="spin"></div>Audit des clauses du contrat...</div></div>
-        <div id="con-res" style="display:none"><div class="result-box" id="con-txt"></div></div>
+        <div id="con-load" style="display:none;margin-top:14px"><div class="loading-box"><div class="spin"></div>Lecture des clauses juridiques et calcul des dates…</div></div>
+        <div id="con-res" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;margin-bottom:8px">
+            <span style="font-size:12px;font-weight:600;color:var(--success)">✓ Contrat audité avec succès</span>
+            <button class="btn btn-ghost btn-sm" onclick="copyResult('con-txt')">Copier le résumé</button>
+          </div>
+          <div class="result-box" id="con-txt"></div>
+        </div>
       </div></div>
     </div>
+
   </div></div>
 </div>
 
@@ -346,11 +429,14 @@ textarea{resize:vertical;min-height:72px}
       <div class="sc" onclick="sc('Génère un Plan Pluriannuel de Travaux pour un immeuble de 24 lots, construit en 1974, DPE E, chauffage collectif gaz.')">📋 PPT complet</div>
       <div class="sc" onclick="sc('Rédige une convocation AG ordinaire avec ordre du jour : approbation comptes, vote budget, travaux ravalement, questions diverses.')">📨 Convocation AG</div>
       <div class="sc" onclick="sc('Quelles aides financières MaPrimeRénov, CEE et éco-PTZ pour une isolation de façade en copropriété de 30 lots ?')">💰 Aides dispo</div>
+      <div class="sc" onclick="sc('Explique les obligations PPT 2025 : qui est concerné, délais, contenu minimum obligatoire.')">⚖️ Obligations 2025</div>
+      <div class="sc" onclick="sc('Rédige une note de synthèse pour le conseil syndical résumant l\'état général de la copropriété et les priorités de travaux.')">📝 Note CS</div>
+      <div class="sc" onclick="sc('Rédige un courrier de mise en demeure pour charges impayées depuis 3 mois.')">✉️ Mise en demeure</div>
     </div>
     <div id="chat-messages">
       <div class="msg ai">
         <div class="ai-lbl"><div class="ai-lbl-dot">✦</div><span class="ai-lbl-name">SYNDIA</span></div>
-        <div class="bubble">Bonjour ! Je suis votre expert en droit et gestion de copropriété française. Posez votre question ou connectez une clé API pour commencer.</div>
+        <div class="bubble">Bonjour ! Je suis votre expert en droit et gestion de copropriété française.<br><br>Je maîtrise la loi 1965, ALUR, ELAN, la réforme 2025, le PPT, MaPrimeRénov', les CEE et toute la réglementation en vigueur.<br><br>Utilisez les raccourcis ou posez directement votre question.</div>
         <div class="msg-time">Maintenant</div>
       </div>
     </div>
@@ -366,79 +452,133 @@ textarea{resize:vertical;min-height:72px}
 </div>
 
 <div class="view" id="view-rapports">
-  <div class="topbar"><div class="topbar-title">Générateur de rapports IA</div></div>
+  <div class="topbar"><div class="topbar-title">Générateur de rapports</div></div>
   <div class="view-scroll"><div class="content">
+    
     <div class="tabs" id="tabs-rap">
       <div class="tab active" onclick="switchRapTab('ppt')">📋 Plan PPT</div>
-      <div class="tab" onclick="switchRapTab('ag')">📨 Convoc AG</div>
-      <div class="tab" onclick="switchRapTab('cs')">👥 Note Conseil</div>
+      <div class="tab" onclick="switchRapTab('ag')">📨 Convocation AG</div>
+      <div class="tab" onclick="switchRapTab('cs')">👥 Note Conseil Syndical</div>
       <div class="tab" onclick="switchRapTab('courrier')">✉️ Courrier type</div>
     </div>
 
-    <div class="rtab-content active" id="rtab-ppt" style="display:block;">
+    <div class="tab-content active" id="rtab-ppt" style="display:block;">
       <div class="card"><div class="card-body">
         <div class="form-grid">
-          <div class="fg full"><label>Copropriété</label><input id="ppt-adr" placeholder="Résidence Les Mimosas, 13100 Aix"></div>
+          <div class="fg full"><label>Copropriété</label><input id="ppt-adr" placeholder="Résidence Les Mimosas, 15 av. du Soleil, 13100 Aix-en-Provence"></div>
+          <div class="fg"><label>Année de construction</label><input id="ppt-an" type="number" placeholder="1975"></div>
           <div class="fg"><label>Lots principaux</label><input id="ppt-lots" type="number" placeholder="24"></div>
-          <div class="fg"><label>Classe DPE</label><select id="ppt-dpe"><option>A</option><option>D</option><option>F</option></select></div>
+          <div class="fg"><label>Surface totale (m²)</label><input id="ppt-surf" type="number" placeholder="1800"></div>
+          <div class="fg"><label>Classe DPE</label><select id="ppt-dpe"><option>A</option><option>B</option><option>C</option><option selected>D</option><option>E</option><option>F</option><option>G</option></select></div>
+          <div class="fg"><label>Chauffage collectif</label><select id="ppt-chauf"><option>Gaz naturel</option><option>Fioul</option><option>PAC</option><option>Chauffage urbain</option><option>Électrique individuel</option></select></div>
+          <div class="fg full"><label>Travaux déjà réalisés</label><textarea id="ppt-trav" placeholder="Ravalement façade 2018, chaudière 2020…"></textarea></div>
+          <div class="fg full"><label>Problèmes identifiés</label><textarea id="ppt-pb" placeholder="Infiltrations toiture, ascenseur vétuste…"></textarea></div>
         </div>
-        <div style="margin-top:14px"><button class="btn btn-gold" onclick="runAI('ppt')">✦ Générer le PPT complet</button></div>
+        <div style="display:flex;gap:7px;margin-top:14px">
+          <button class="btn btn-gold" onclick="runAI('ppt', 'rap')">✦ Générer le PPT complet</button>
+          <button class="btn btn-ghost" onclick="prefillPPT()">Exemple</button>
+        </div>
         <div id="ppt-load" style="display:none;margin-top:12px"><div class="loading-box"><div class="spin"></div>Génération du PPT (20-30 secondes)…</div></div>
-        <div id="ppt-res" style="display:none"><div class="result-box" id="ppt-txt"></div></div>
+        <div id="ppt-res" style="display:none"><div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;margin-bottom:7px"><span style="font-size:12px;font-weight:600;color:var(--success)">✓ PPT généré</span><button class="btn btn-ghost btn-sm" onclick="copyResult('ppt-txt')">Copier</button></div><div class="result-box" id="ppt-txt"></div></div>
       </div></div>
     </div>
 
-    <div class="rtab-content" id="rtab-ag" style="display:none;">
+    <div class="tab-content" id="rtab-ag" style="display:none;">
       <div class="card"><div class="card-body">
         <div class="form-grid">
-          <div class="fg full"><label>Nom de la copropriété</label><input id="ag-nom" placeholder="Résidence Les Oliviers"></div>
-          <div class="fg full"><label>Ordre du jour (un point par ligne)</label><textarea id="ag-odj" placeholder="Approbation comptes..."></textarea></div>
+          <div class="fg"><label>Nom de la copropriété</label><input id="ag-nom" placeholder="Résidence Les Oliviers"></div>
+          <div class="fg"><label>Date de l'AG</label><input id="ag-date" type="date"></div>
+          <div class="fg"><label>Heure</label><input id="ag-h" type="time" value="18:30"></div>
+          <div class="fg"><label>Lieu</label><input id="ag-lieu" placeholder="Salle polyvalente…"></div>
+          <div class="fg full"><label>Ordre du jour (un point par ligne)</label><textarea id="ag-odj" placeholder="Approbation comptes 2024&#10;Vote budget 2025&#10;Travaux ravalement&#10;Questions diverses"></textarea></div>
         </div>
-        <div style="margin-top:14px"><button class="btn btn-gold" onclick="runAI('ag')">✦ Générer la convocation</button></div>
+        <button class="btn btn-gold" style="margin-top:14px" onclick="runAI('ag', 'rap')">✦ Générer la convocation</button>
         <div id="ag-load" style="display:none;margin-top:12px"><div class="loading-box"><div class="spin"></div>Rédaction de la convocation…</div></div>
-        <div id="ag-res" style="display:none"><div class="result-box" id="ag-txt"></div></div>
+        <div id="ag-res" style="display:none"><div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;margin-bottom:7px"><span style="font-size:12px;font-weight:600;color:var(--success)">✓ Convocation générée</span><button class="btn btn-ghost btn-sm" onclick="copyResult('ag-txt')">Copier</button></div><div class="result-box" id="ag-txt"></div></div>
       </div></div>
     </div>
 
-    <div class="rtab-content" id="rtab-cs" style="display:none;">
+    <div class="tab-content" id="rtab-cs" style="display:none;">
       <div class="card"><div class="card-body">
-        <div class="form-grid">
-          <div class="fg full"><label>Situation financière</label><textarea id="cs-fin" placeholder="Budget total : 45 000€..."></textarea></div>
-          <div class="fg full"><label>État technique</label><textarea id="cs-tech" placeholder="Toiture : bon état..."></textarea></div>
+        <div style="background:var(--ibg);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--info);line-height:1.6">
+          💡 <strong>Le test ultime :</strong> Donnez-moi le PV de l'année dernière et le carnet d'entretien via l'onglet "Import documents", puis générez ici la note de synthèse automatiquement.
         </div>
-        <div style="margin-top:14px"><button class="btn btn-gold" onclick="runAI('cs')">✦ Générer la note de synthèse</button></div>
-        <div id="cs-load" style="display:none;margin-top:12px"><div class="loading-box"><div class="spin"></div>Génération de la note…</div></div>
-        <div id="cs-res" style="display:none"><div class="result-box" id="cs-txt"></div></div>
+        <div class="form-grid">
+          <div class="fg"><label>Copropriété</label><input id="cs-nom" placeholder="Résidence Les Pins"></div>
+          <div class="fg"><label>Période de référence</label><input id="cs-periode" placeholder="Exercice 2024"></div>
+          <div class="fg full"><label>Situation financière</label><textarea id="cs-finances" placeholder="Budget total : 45 000€, charges courantes 38 000€, fonds travaux 7 000€, impayés : 2 300€…"></textarea></div>
+          <div class="fg full"><label>État technique (ou collez le résumé du carnet d'entretien)</label><textarea id="cs-tech" placeholder="Toiture : bon état (refaite 2019). Chaufferie : chaudière gaz 2020, entretien annuel OK. Ascenseur : révision 2023…"></textarea></div>
+          <div class="fg full"><label>Travaux en cours ou votés</label><textarea id="cs-travaux" placeholder="Ravalement façade votée en AG 2024 : devis en cours, livraison prévue T3 2025…"></textarea></div>
+          <div class="fg full"><label>Points d'attention particuliers</label><textarea id="cs-points" placeholder="Sinistre toiture lot 12, procédure amiable en cours. Charges impayées lot 7…"></textarea></div>
+        </div>
+        <div style="display:flex;gap:7px;margin-top:14px">
+          <button class="btn btn-gold" onclick="runAI('cs', 'rap')">✦ Générer la note Conseil Syndical</button>
+          <button class="btn btn-ghost" onclick="prefillCS()">Exemple</button>
+        </div>
+        <div id="cs-load" style="display:none;margin-top:12px"><div class="loading-box"><div class="spin"></div>Génération de la note de synthèse…</div></div>
+        <div id="cs-res" style="display:none"><div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;margin-bottom:7px"><span style="font-size:12px;font-weight:600;color:var(--success)">✓ Note Conseil Syndical générée</span><button class="btn btn-ghost btn-sm" onclick="copyResult('cs-txt')">Copier</button></div><div class="result-box" id="cs-txt"></div></div>
       </div></div>
     </div>
 
-    <div class="rtab-content" id="rtab-courrier" style="display:none;">
+    <div class="tab-content" id="rtab-courrier" style="display:none;">
       <div class="card"><div class="card-body">
         <div class="form-grid">
-          <div class="fg"><label>Destinataire</label><input id="co-dest" placeholder="M. Dupont"></div>
-          <div class="fg full"><label>Contexte / Objet du courrier</label><textarea id="co-ctx" placeholder="Mise en demeure pour impayés..."></textarea></div>
+          <div class="fg full"><label>Type de courrier</label><select id="co-type"><option>Mise en demeure charges impayées</option><option>Notification travaux votés en AG</option><option>Réponse réclamation copropriétaire</option><option>Convocation réunion conseil syndical</option><option>Signalement sinistre assurance</option><option>Relance travaux non conformes</option></select></div>
+          <div class="fg"><label>Destinataire</label><input id="co-dest" placeholder="M. et Mme Dupont, lot 12"></div>
+          <div class="fg"><label>Copropriété</label><input id="co-copro" placeholder="Résidence Les Oliviers"></div>
+          <div class="fg full"><label>Contexte / détails</label><textarea id="co-ctx" placeholder="Décrivez la situation…"></textarea></div>
         </div>
-        <div style="margin-top:14px"><button class="btn btn-gold" onclick="runAI('co')">✦ Générer le courrier</button></div>
+        <button class="btn btn-gold" style="margin-top:14px" onclick="runAI('co', 'rap')">✦ Générer le courrier</button>
         <div id="co-load" style="display:none;margin-top:12px"><div class="loading-box"><div class="spin"></div>Rédaction du courrier…</div></div>
-        <div id="co-res" style="display:none"><div class="result-box" id="co-txt"></div></div>
+        <div id="co-res" style="display:none"><div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;margin-bottom:7px"><span style="font-size:12px;font-weight:600;color:var(--success)">✓ Courrier généré</span><button class="btn btn-ghost btn-sm" onclick="copyResult('co-txt')">Copier</button></div><div class="result-box" id="co-txt"></div></div>
       </div></div>
     </div>
   </div></div>
 </div>
 
 <div class="view" id="view-energie">
-  <div class="topbar"><div class="topbar-title">Suivi énergétique</div></div>
+  <div class="topbar">
+    <div><div class="topbar-title">Suivi énergétique</div><div class="topbar-sub">Import CSV Enedis/GRDF ou saisie manuelle — détection automatique d'anomalies</div></div>
+  </div>
   <div class="view-scroll"><div class="content">
-    <div class="card" style="border-color:#b0d0f0;background:linear-gradient(135deg,var(--ibg),#fff)"><div class="card-body">
-      <div style="display:flex;align-items:center;gap:14px">
-        <div style="font-size:32px">⚡</div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px">Connexion Enedis / GRDF</div>
-          <div style="font-size:12px;color:var(--text2);">Importez un export CSV pour détecter les anomalies automatiquement.</div>
+
+    <div class="card" style="border-color:#b0d0f0;background:linear-gradient(135deg,var(--ibg),#fff)">
+      <div class="card-body">
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="font-size:32px">⚡</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px">Connexion Enedis / GRDF</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.6">Importez un export CSV de votre espace Enedis Pro ou GRDF pour une analyse automatique. SyndIA détecte les anomalies et génère les alertes en temps réel.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('enedis-input').click()">📂 Import CSV Enedis</button>
+            <input type="file" id="enedis-input" style="display:none" accept=".csv,.xlsx" onchange="importEnedis(this)">
+            <button class="btn btn-ghost btn-sm" onclick="simulateEnedis()">🔄 Simuler une alerte</button>
+          </div>
         </div>
-        <button class="btn btn-ghost btn-sm">📂 Import CSV</button>
       </div>
-    </div></div>
+    </div>
+
+    <div id="energy-alerts"></div>
+
+    <div class="card"><div class="card-header"><span class="card-title">Saisie manuelle & analyse IA</span></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="fg"><label>Copropriété</label><input id="en-nom" placeholder="Résidence Les Pins"></div>
+          <div class="fg"><label>Période</label><select id="en-per"><option>Janvier 2025</option><option>Février 2025</option><option>Mars 2025</option><option>Avril 2025</option><option>Trimestre 1 - 2025</option><option>Année 2024</option></select></div>
+          <div class="fg"><label>Électricité (kWh)</label><input id="en-elec" type="number" placeholder="12450"></div>
+          <div class="fg"><label>Gaz (kWh)</label><input id="en-gaz" type="number" placeholder="48200"></div>
+          <div class="fg"><label>Coût total (€)</label><input id="en-cout" type="number" placeholder="8750"></div>
+          <div class="fg"><label>Évolution vs N-1</label><input id="en-evo" placeholder="+12% ou -5%"></div>
+          <div class="fg full"><label>Observations</label><textarea id="en-obs" placeholder="Hausse liée au froid, chaudière réglée à 20°C…"></textarea></div>
+        </div>
+        <div style="display:flex;gap:7px;margin-top:14px">
+          <button class="btn btn-gold" onclick="runAI('en', 'doc')">✦ Analyser & Générer rapport</button>
+        </div>
+        <div id="en-load" style="display:none;margin-top:12px"><div class="loading-box"><div class="spin"></div>Analyse et détection d'anomalies…</div></div>
+        <div id="en-res" style="display:none"><div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;margin-bottom:7px"><span style="font-size:12px;font-weight:600;color:var(--success)">✓ Rapport généré</span><button class="btn btn-ghost btn-sm" onclick="copyResult('en-txt')">Copier</button></div><div class="result-box" id="en-txt"></div></div>
+      </div>
+    </div>
   </div></div>
 </div>
 
@@ -454,7 +594,11 @@ textarea{resize:vertical;min-height:72px}
 
 <div class="modal-overlay hidden" id="api-modal">
   <div class="modal" style="max-width:420px;text-align:center">
+    <div style="width:48px;height:48px;background:var(--navy);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+    </div>
     <div style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:12px">Configuration de l'IA</div>
+    
     <div class="fg" style="text-align:left;margin-bottom:14px">
       <label>Moteur d'Intelligence Artificielle</label>
       <select id="api-provider" onchange="toggleApiInput()">
@@ -463,11 +607,13 @@ textarea{resize:vertical;min-height:72px}
         <option value="anthropic">Anthropic Claude (Clé requise)</option>
       </select>
     </div>
+    
     <div class="fg" id="api-key-container" style="display:none;text-align:left;margin-bottom:16px">
       <label>Clé API Secrète</label>
       <input type="password" id="api-inp" placeholder="Collez votre clé API ici..." style="font-family:monospace;font-size:11px">
       <div style="font-size:10px;color:var(--text3);margin-top:4px">La clé reste sur votre navigateur.</div>
     </div>
+    
     <div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
       <button class="btn btn-ghost" onclick="closeM('api-modal')">Annuler</button>
       <button class="btn btn-primary" onclick="saveKey()">Enregistrer le Mode</button>
@@ -480,13 +626,35 @@ textarea{resize:vertical;min-height:72px}
     <div class="modal-title" id="add-title">Ajouter un immeuble</div>
     <div class="form-grid">
       <div class="fg full"><label>Nom de la copropriété</label><input id="i-nom" placeholder="Résidence Les Oliviers"></div>
+      <div class="fg full"><label>Adresse</label><input id="i-adr" placeholder="12 rue de la Paix, 13001 Marseille"></div>
+      <div class="fg"><label>Année construction</label><input id="i-an" type="number" placeholder="1975"></div>
       <div class="fg"><label>Nombre de lots</label><input id="i-lots" type="number" placeholder="24"></div>
+      <div class="fg"><label>Surface (m²)</label><input id="i-surf" type="number" placeholder="1800"></div>
       <div class="fg"><label>DPE</label><select id="i-dpe"><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option></select></div>
-      <div class="fg"><label>PPT</label><select id="i-ppt"><option value="non">À faire</option><option value="en-cours">En cours</option><option value="oui">Établi</option></select></div>
+      <div class="fg"><label>Chauffage</label><select id="i-chauf"><option>Gaz collectif</option><option>Fioul collectif</option><option>PAC collective</option><option>Chauffage urbain</option><option>Électrique individuel</option></select></div>
+      <div class="fg"><label>PPT</label><select id="i-ppt"><option value="non">Non — à faire</option><option value="en-cours">En cours</option><option value="oui">Établi</option></select></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeM('add-modal')">Annuler</button>
       <button class="btn btn-gold" onclick="saveImm()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="ag-modal">
+  <div class="modal">
+    <div class="modal-title">Planifier une Assemblée Générale</div>
+    <div class="form-grid">
+      <div class="fg"><label>Copropriété</label>
+        <select id="ag-imm"><option value="">-- Choisir --</option></select>
+      </div>
+      <div class="fg"><label>Date de l'AG</label><input id="ag-dt" type="date"></div>
+      <div class="fg"><label>Heure</label><input id="ag-ht" type="time" value="18:30"></div>
+      <div class="fg"><label>Type</label><select id="ag-type"><option>Ordinaire</option><option>Extraordinaire</option></select></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeM('ag-modal')">Annuler</button>
+      <button class="btn btn-gold" onclick="saveAG()">Ajouter au calendrier</button>
     </div>
   </div>
 </div>
@@ -496,75 +664,82 @@ textarea{resize:vertical;min-height:72px}
     <div class="modal-title">Nouvelle Tâche</div>
     <div class="form-grid">
       <div class="fg full"><label>Description de la tâche</label><input id="m-titre" placeholder="Ex: Relancer devis toiture"></div>
+      <div class="fg"><label>Assigné à</label>
+        <select id="m-assign"><option>Moi-même</option><option>Comptabilité</option><option>Assistant(e)</option><option>Gestionnaire technique</option></select>
+      </div>
+      <div class="fg"><label>Échéance</label><input id="m-date" type="date"></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeM('mission-modal')">Annuler</button>
-      <button class="btn btn-gold" onclick="saveMission()">Ajouter</button>
+      <button class="btn btn-gold" onclick="saveMission()">Enregistrer</button>
     </div>
   </div>
 </div>
 
 <script>
-// ═══ STATE & VARIABLES ════════════════════════════════════════════════════
+// ═══ STATE ═══════════════════════════════════════════════════════════════════
 let apiProvider = localStorage.getItem('syndia_provider') || 'demo';
 let apiKey = localStorage.getItem('syndia_k') || '';
 let immeubles = JSON.parse(localStorage.getItem('syndia_imm') || '[]');
+let agendas = JSON.parse(localStorage.getItem('syndia_ag') || '[]');
 let missions = JSON.parse(localStorage.getItem('syndia_missions') || '[]');
 let chatHist = [];
+let editId = null;
 
-// ═══ INIT ═════════════════════════════════════════════════════════════════
+// ═══ INIT ════════════════════════════════════════════════════════════════════
 window.onload = () => {
   updateApiStatus();
   renderDash();
   renderImm();
+  renderAgenda();
   renderMissions();
   renderAlertes();
   document.getElementById('dash-date').textContent = new Date().toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('ag-date').value = new Date(Date.now()+30*86400000).toISOString().split('T')[0];
+  document.getElementById('ag-dt').value = new Date(Date.now()+45*86400000).toISOString().split('T')[0];
+  document.getElementById('m-date').value = new Date(Date.now()+7*86400000).toISOString().split('T')[0];
 };
 
-// ═══ NAVIGATION BLINDÉE (CORRIGÉE) ════════════════════════════════════════
+// ═══ NAVIGATION PRINCIPALE ═══════════════════════════════════════════════════
 function nav(v) {
-  // 1. Cacher toutes les pages
+  // Masque toutes les vues
   document.querySelectorAll('.view').forEach(x => x.style.display = 'none');
+  document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
   
-  // 2. Afficher la bonne page
+  // Affiche la bonne vue
   const target = document.getElementById('view-' + v);
   if (target) target.style.display = 'flex';
+  
+  // Met en surbrillance le bon menu
+  const idx = ['dashboard','immeubles','agenda','missions','documents','assistant','rapports','energie','alertes'].indexOf(v);
+  if (idx !== -1) document.querySelectorAll('.nav-item')[idx]?.classList.add('active');
 
-  // 3. Allumer le bon bouton dans le menu de gauche
-  document.querySelectorAll('.nav-item').forEach(x => {
-    if (x.getAttribute('onclick').includes(`'${v}'`)) {
-      x.classList.add('active');
-    } else {
-      x.classList.remove('active');
-    }
-  });
-
-  // 4. Mettre à jour les stats si on revient sur une page
-  if(v === 'dashboard') renderDash();
-  if(v === 'immeubles') renderImm();
-  if(v === 'missions') renderMissions();
-  if(v === 'alertes') renderAlertes();
+  // Met à jour les données si nécessaire
+  if(v==='immeubles') renderImm();
+  if(v==='dashboard') renderDash();
+  if(v==='agenda') renderAgenda();
+  if(v==='missions') renderMissions();
+  if(v==='alertes') renderAlertes();
 }
 
-// ═══ ONGLETS BLINDÉS (LA CORRECTION DU BUG) ═══════════════════════════════
+// ═══ ONGLETS BLINDÉS (LA CORRECTION DU BUG) ══════════════════════════════════
 function switchDocTab(t) {
+  // Restreint la recherche aux onglets de la section "Documents"
+  const view = document.getElementById('view-documents');
   const allTabs = ['reglement', 'pv', 'carnet', 'devis', 'contrats'];
   
-  // Onglets visuels
-  const view = document.getElementById('view-documents');
-  if (view) {
-    view.querySelectorAll('.tab').forEach(btn => {
-      if (btn.getAttribute('onclick').includes(`'${t}'`)) btn.classList.add('active');
-      else btn.classList.remove('active');
-    });
-  }
-  
-  // Contenu des onglets
-  allTabs.forEach(id => {
+  // Met à jour les boutons d'onglets
+  const tabButtons = view.querySelectorAll('.tabs .tab');
+  allTabs.forEach((id, index) => {
+    if(tabButtons[index]) {
+      if(id === t) tabButtons[index].classList.add('active');
+      else tabButtons[index].classList.remove('active');
+    }
+    
+    // Met à jour le contenu affiché
     const content = document.getElementById('dtab-' + id);
-    if (content) {
-      if (id === t) {
+    if(content) {
+      if(id === t) {
         content.style.display = 'block';
         content.classList.add('active');
       } else {
@@ -576,22 +751,22 @@ function switchDocTab(t) {
 }
 
 function switchRapTab(t) {
+  // Restreint la recherche aux onglets de la section "Rapports"
+  const view = document.getElementById('view-rapports');
   const allTabs = ['ppt', 'ag', 'cs', 'courrier'];
   
-  // Onglets visuels
-  const view = document.getElementById('view-rapports');
-  if (view) {
-    view.querySelectorAll('.tab').forEach(btn => {
-      if (btn.getAttribute('onclick').includes(`'${t}'`)) btn.classList.add('active');
-      else btn.classList.remove('active');
-    });
-  }
-  
-  // Contenu des onglets
-  allTabs.forEach(id => {
+  // Met à jour les boutons d'onglets
+  const tabButtons = view.querySelectorAll('.tabs .tab');
+  allTabs.forEach((id, index) => {
+    if(tabButtons[index]) {
+      if(id === t) tabButtons[index].classList.add('active');
+      else tabButtons[index].classList.remove('active');
+    }
+    
+    // Met à jour le contenu affiché
     const content = document.getElementById('rtab-' + id);
-    if (content) {
-      if (id === t) {
+    if(content) {
+      if(id === t) {
         content.style.display = 'block';
         content.classList.add('active');
       } else {
@@ -602,27 +777,30 @@ function switchRapTab(t) {
   });
 }
 
-// ═══ CONFIGURATION IA (DEMO, GEMINI, CLAUDE) ══════════════════════════════
+// ═══ API & MOTEUR IA ═════════════════════════════════════════════════════════
 function toggleApiInput() {
   const provider = document.getElementById('api-provider').value;
   document.getElementById('api-key-container').style.display = provider === 'demo' ? 'none' : 'block';
 }
 
-function showApiModal() { 
+function showApiModal(){
   document.getElementById('api-provider').value = apiProvider;
   document.getElementById('api-inp').value = apiKey;
   toggleApiInput();
-  document.getElementById('api-modal').classList.remove('hidden'); 
+  document.getElementById('api-modal').classList.remove('hidden');
 }
 
-function closeM(id) { document.getElementById(id).classList.add('hidden'); }
+function closeM(id){document.getElementById(id).classList.add('hidden')}
 
-function saveKey() {
+function saveKey(){
   apiProvider = document.getElementById('api-provider').value;
-  apiKey = document.getElementById('api-inp').value.trim();
+  const k=document.getElementById('api-inp').value.trim();
+  if(apiProvider !== 'demo' && !k) return; // Force à mettre une clé si pas en mode démo
+  
+  apiKey=k; 
   localStorage.setItem('syndia_provider', apiProvider);
-  localStorage.setItem('syndia_k', apiKey);
-  updateApiStatus();
+  localStorage.setItem('syndia_k', k); 
+  updateApiStatus(); 
   closeM('api-modal');
 }
 
@@ -638,12 +816,10 @@ function updateApiStatus() {
   }
 }
 
-// ═══ MOTEUR IA CENTRALISÉ ════════════════════════════════════════════════
-async function runAI(targetId) {
-  // Verif API
+// Fonction centrale pour simuler l'IA (Onboarding)
+async function runAI(targetId, typeContext) {
   if (apiProvider !== 'demo' && !apiKey) { showApiModal(); return; }
   
-  // Afficher Loader, cacher Résultat
   const loadEl = document.getElementById(targetId + '-load');
   const resEl = document.getElementById(targetId + '-res');
   const txtEl = document.getElementById(targetId + '-txt');
@@ -655,32 +831,272 @@ async function runAI(targetId) {
     let htmlResult = "";
 
     if (apiProvider === 'demo') {
-      // Simulation pour démo instantanée
-      await new Promise(r => setTimeout(r, 1500));
+      // TEMPS D'ATTENTE SIMULE
+      await new Promise(r => setTimeout(r, 2000));
       
-      if(targetId === 'reg') htmlResult = "<h3>📜 Analyse du Règlement</h3><strong>Immeuble :</strong> Résidence test<br><strong>Attention :</strong> Clause d'usage bourgeois exclusif détectée.";
-      else if(targetId === 'dev') htmlResult = "<h3>⚖️ Comparatif des Devis Toiture</h3><strong>1. Entreprise Dupont :</strong> 14 500€ HT (Échafaudage inclus).<br><strong>2. Toiture Pro :</strong> 12 800€ HT (⚠️ Évacuation non chiffrée).";
-      else if(targetId === 'con') htmlResult = "<h3>🤝 Audit de Contrat</h3><strong>🚨 ACTION REQUISE :</strong> Envoyer un recommandé avant le 15 Septembre pour bloquer la tacite reconduction.";
-      else if(targetId === 'ppt') htmlResult = "<h3>📋 Plan Pluriannuel de Travaux</h3><strong>Année 1 (Urgent) :</strong> Isolation combles (12 000€).<br><strong>Année 3 :</strong> Remplacement VMC (4 500€).";
-      else htmlResult = "<strong>✓ Génération réussie.</strong><br>Ceci est un texte de démonstration généré gratuitement par le Mode Démo. En connectant une vraie clé API Google ou Anthropic, l'IA traiterait vos vrais documents.";
-    
+      // REPONSES BLUFFANTES PRE-ENREGISTREES POUR LA DEMO
+      if(targetId === 'reg') htmlResult = "<h3>📜 Analyse du Règlement</h3><strong>Immeuble :</strong> Résidence test<br><strong>Nombre de lots :</strong> 45<br><strong>Attention :</strong> Clause d'usage bourgeois exclusif détectée (Art. 4). La répartition des charges d'ascenseur (Art. 12) semble obsolète vis-à-vis de la loi ELAN.";
+      else if(targetId === 'con') htmlResult = "<h3>🤝 Audit de Contrat (Maintenance)</h3><strong>Date d'échéance :</strong> 31 Décembre 2026<br><strong>Préavis :</strong> 3 mois (soit avant le 30 Septembre).<br><strong>🚨 ACTION REQUISE :</strong> Envoyer un recommandé avant le 15 Septembre pour bloquer la tacite reconduction.";
+      else if(targetId === 'dev') htmlResult = "<h3>⚖️ Comparatif des 3 Devis Toiture</h3><strong>1. Entreprise Dupont :</strong> 14 500€ HT (Échafaudage inclus).<br><strong>2. Toiture Pro :</strong> 12 800€ HT (⚠️ Attention : Évacuation des gravats non chiffrée).<br><strong>3. Artisan local :</strong> 16 000€ HT (Garantie décennale explicitement jointe).<br><br><em>Recommandation SyndIA :</em> Privilégier l'entreprise Dupont pour un budget sans surprise.";
+      else if(targetId === 'ppt') htmlResult = "<h3>📋 Plan Pluriannuel de Travaux (Généré)</h3><strong>Objectif 2030 :</strong> -40% d'émissions.<br><br><strong>Année 1 (Urgent) :</strong> Isolation des combles perdus. Budget estimé : 12 000€ (Éligible MaPrimeRénov).<br><strong>Année 3 :</strong> Remplacement de la VMC. Budget estimé : 4 500€.<br><strong>Année 5 :</strong> Ravalement avec ITE. Budget estimé : 85 000€.";
+      else htmlResult = "<strong>✓ Génération IA réussie.</strong><br><br>Ceci est un texte de démonstration généré instantanément et gratuitement par le <em>Mode Démo</em>. En connectant une API Google Gemini ou Anthropic Claude, vos vraies requêtes partiraient vers les serveurs IA de manière sécurisée.";
+      
     } else {
-      // Appel API Réel (Gemini ou Claude)
-      await new Promise(r => setTimeout(r, 1000));
-      htmlResult = `<strong>Connexion ${apiProvider.toUpperCase()} réussie.</strong><br>Dans la version en production, le texte complet s'afficherait ici.`;
+      // APPEL API REEL (Ici on place le fetch vers Gemini ou Claude)
+      await new Promise(r => setTimeout(r, 1000)); // Simul pour l'instant
+      htmlResult = `<strong>Connexion ${apiProvider.toUpperCase()} simulée avec succès.</strong><br>La clé API commence par <code>${apiKey.substring(0,6)}...</code><br>Le système est prêt pour le déploiement serveur.`;
     }
 
     if(txtEl) txtEl.innerHTML = htmlResult;
     if(resEl) resEl.style.display = 'block';
 
-  } catch(e) {
-    alert("Erreur IA : " + e.message);
+  } catch (error) {
+    alert("Erreur IA : " + error.message);
   } finally {
     if(loadEl) loadEl.style.display = 'none';
   }
 }
 
-// ═══ CHAT ════════════════════════════════════════════════════════════════
+// ═══ DONNÉES DE DEMO (BOUTON MAGIQUE) ════════════════════════════════════
+function loadDemoData() {
+  immeubles = [
+    { id: '1', nom: 'Résidence Les Pins', lots: '45', dpe: 'G', ppt: 'non', chauf: 'Fioul collectif' },
+    { id: '2', nom: 'Le Montesquieu', lots: '18', dpe: 'D', ppt: 'en-cours', chauf: 'Gaz collectif' },
+    { id: '3', nom: 'Villa Nova', lots: '32', dpe: 'C', ppt: 'oui', chauf: 'Individuel' }
+  ];
+  missions = [
+    { id: 'm1', titre: 'Demander 3 devis pour remplacement chaudière (Les Pins)', done: false, assign: 'Gestionnaire technique' },
+    { id: 'm2', titre: 'Convoquer l\'AG extraordinaire (Le Montesquieu)', done: false, assign: 'Assistant(e)' }
+  ];
+  agendas = [
+    { id: 'a1', immId: '3', immNom: 'Villa Nova', date: new Date(Date.now() + 14*86400000).toISOString().split('T')[0], heure: '18:30', type: 'Ordinaire' }
+  ];
+  localStorage.setItem('syndia_imm', JSON.stringify(immeubles));
+  localStorage.setItem('syndia_missions', JSON.stringify(missions));
+  localStorage.setItem('syndia_ag', JSON.stringify(agendas));
+  
+  renderDash(); renderImm(); renderMissions(); renderAgenda(); renderAlertes();
+}
+
+// ═══ IMMEUBLES ════════════════════════════════════════════════════════════════
+function showAddModal(id=null){
+  editId=id;
+  const m=id?immeubles.find(i=>i.id===id):null;
+  document.getElementById('add-title').textContent=id?'Modifier':'Ajouter un immeuble';
+  ['nom','adr','an','lots','surf'].forEach(f=>document.getElementById('i-'+f).value=m?m[f]:'');
+  document.getElementById('i-dpe').value=m?m.dpe:'D';
+  document.getElementById('i-chauf').value=m?m.chauf:'Gaz collectif';
+  document.getElementById('i-ppt').value=m?m.ppt:'non';
+  document.getElementById('add-modal').classList.remove('hidden');
+}
+function saveImm(){
+  const o={id:editId||Date.now().toString(),nom:document.getElementById('i-nom').value||'Sans nom',adr:document.getElementById('i-adr').value,an:document.getElementById('i-an').value,lots:document.getElementById('i-lots').value,surf:document.getElementById('i-surf').value,dpe:document.getElementById('i-dpe').value,chauf:document.getElementById('i-chauf').value,ppt:document.getElementById('i-ppt').value};
+  if(editId){const i=immeubles.findIndex(x=>x.id===editId);immeubles[i]=o;}else immeubles.push(o);
+  localStorage.setItem('syndia_imm',JSON.stringify(immeubles));
+  closeM('add-modal');renderImm();renderDash();renderAlertes();
+  const sel=document.getElementById('ag-imm');
+  if(sel) sel.innerHTML='<option value="">-- Choisir --</option>'+immeubles.map(x=>`<option value="${x.id}">${x.nom}</option>`).join('');
+}
+function delImm(id){
+  if(!confirm('Supprimer cet immeuble ?'))return;
+  immeubles=immeubles.filter(i=>i.id!==id);
+  localStorage.setItem('syndia_imm',JSON.stringify(immeubles));
+  renderImm();renderDash();renderAlertes();
+}
+function renderImm(){
+  document.getElementById('imm-sub').textContent=immeubles.length+' immeuble'+(immeubles.length>1?'s':'');
+  const el=document.getElementById('imm-table');
+  if(!immeubles.length){el.innerHTML='<div class="empty"><div class="empty-icon">🏢</div><div class="empty-title">Portefeuille vide</div><button class="btn btn-primary" onclick="loadDemoData()">🚀 Charger données démo</button></div>';return;}
+  el.innerHTML=`<table><thead><tr><th>Copropriété</th><th>Adresse</th><th>Lots</th><th>DPE</th><th>PPT</th><th>Actions</th></tr></thead><tbody>${immeubles.map(i=>`<tr>
+    <td>${i.nom}</td><td style="color:var(--text3);font-size:11px">${i.adr||'—'}</td>
+    <td>${i.lots||'—'}</td>
+    <td><span class="dpe dpe-${i.dpe}">${i.dpe}</span></td>
+    <td><span class="pill ${i.ppt==='oui'?'pill-g':i.ppt==='en-cours'?'pill-b':'pill-r'}">${i.ppt==='oui'?'Établi':i.ppt==='en-cours'?'En cours':'À faire'}</span></td>
+    <td style="display:flex;gap:5px">
+      <button class="btn btn-ghost btn-sm" onclick="showAddModal('${i.id}')">✏️</button>
+      <button class="btn btn-danger btn-sm" onclick="delImm('${i.id}')">🗑</button>
+    </td>
+  </tr>`).join('')}</tbody></table>`;
+}
+
+// ═══ MISSIONS & TACHES ════════════════════════════════════════════════════════
+function showMissionModal(){
+  document.getElementById('mission-modal').classList.remove('hidden');
+}
+function saveMission(){
+  const m = {
+    id: Date.now().toString(),
+    titre: document.getElementById('m-titre').value,
+    assign: document.getElementById('m-assign').value,
+    date: document.getElementById('m-date').value,
+    done: false
+  };
+  if(!m.titre) return;
+  missions.push(m);
+  localStorage.setItem('syndia_missions', JSON.stringify(missions));
+  closeM('mission-modal');
+  renderMissions(); renderDash();
+}
+function toggleMission(id){
+  const m = missions.find(x=>x.id===id);
+  if(m) { m.done = !m.done; localStorage.setItem('syndia_missions', JSON.stringify(missions)); renderMissions(); renderDash(); }
+}
+function renderMissions(){
+  const todo = missions.filter(m=>!m.done);
+  const done = missions.filter(m=>m.done);
+  
+  const renderItem = (m) => `
+    <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;align-items:flex-start;gap:10px;box-shadow:var(--sh);">
+      <input type="checkbox" ${m.done?'checked':''} onchange="toggleMission('${m.id}')" style="margin-top:2px;width:16px;height:16px;accent-color:var(--gold);cursor:pointer;">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;text-decoration:${m.done?'line-through':''}">${m.titre}</div>
+        <div style="display:flex;gap:6px;font-size:10px;">
+          <span style="background:var(--ibg);color:var(--info);padding:3px 8px;border-radius:10px;font-weight:600">👤 ${m.assign||'Équipe'}</span>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="if(confirm('Supprimer cette tâche ?')) { missions=missions.filter(x=>x.id!=='${m.id}');localStorage.setItem('syndia_missions',JSON.stringify(missions));renderMissions();renderDash(); }">🗑</button>
+    </div>`;
+
+  document.getElementById('missions-todo').innerHTML = todo.length ? todo.map(renderItem).join('') : '<div style="text-align:center;padding:20px;color:var(--text3);font-size:12px">Aucune tâche en cours 🎉</div>';
+  document.getElementById('missions-done').innerHTML = done.length ? done.map(renderItem).join('') : '';
+}
+
+// ═══ AGENDA AG ════════════════════════════════════════════════════════════════
+function showAgModal(){
+  const sel=document.getElementById('ag-imm');
+  if(sel) sel.innerHTML='<option value="">-- Choisir --</option>'+immeubles.map(x=>`<option value="${x.id}">${x.nom}</option>`).join('');
+  document.getElementById('ag-modal').classList.remove('hidden');
+}
+function saveAG(){
+  const ag={id:Date.now().toString(),immId:document.getElementById('ag-imm').value,immNom:document.getElementById('ag-imm').selectedOptions[0]?.text||'',date:document.getElementById('ag-dt').value,heure:document.getElementById('ag-ht').value,type:document.getElementById('ag-type').value};
+  if(!ag.date)return;
+  agendas.push(ag);
+  localStorage.setItem('syndia_ag',JSON.stringify(agendas));
+  closeM('ag-modal');renderAgenda();renderDash();
+}
+function delAG(id){
+  agendas=agendas.filter(a=>a.id!==id);
+  localStorage.setItem('syndia_ag',JSON.stringify(agendas));
+  renderAgenda();renderDash();
+}
+function renderAgenda(){
+  const now=new Date();
+  const upcoming=agendas.filter(a=>new Date(a.date)>=now).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const past=agendas.filter(a=>new Date(a.date)<now);
+  const badge=document.getElementById('badge-agenda');
+  const urgents=upcoming.filter(a=>{const d=new Date(a.date);const conv=new Date(d);conv.setDate(conv.getDate()-21);return (conv-now)/(86400000)<3&&(conv-now)/(86400000)>-1;});
+  if(badge) { badge.textContent=urgents.length||upcoming.length; badge.style.display=(urgents.length||upcoming.length)?'inline':'none'; }
+
+  const el=document.getElementById('agenda-list');
+  if(!agendas.length){el.innerHTML='<div class="empty"><div class="empty-icon">📅</div><div class="empty-title">Aucune AG planifiée</div><div class="empty-sub">Ajoutez vos dates d\'AG pour suivre automatiquement les délais légaux</div><button class="btn btn-primary" onclick="showAgModal()">+ Planifier une AG</button></div>';return;}
+
+  el.innerHTML=[...upcoming.map(a=>renderAgCard(a,now,false)),...past.slice(0,3).map(a=>renderAgCard(a,now,true))].join('');
+}
+function renderAgCard(a,now,isPast){
+  const agDate=new Date(a.date);
+  const convDate=new Date(agDate);convDate.setDate(convDate.getDate()-21);
+  const relanceDate=new Date(agDate);relanceDate.setDate(relanceDate.getDate()-35);
+  const budgetDate=new Date(agDate);budgetDate.setDate(budgetDate.getDate()-14);
+  const fmtDate=d=>d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const daysTo=d=>Math.round((d-now)/86400000);
+
+  function deadlineHTML(icon,label,date){
+    const days=daysTo(date);
+    const past=days<0;
+    const urgent=days>=0&&days<=3;
+    const color=past?'var(--text3)':urgent?'var(--danger)':days<=7?'var(--warn)':'var(--success)';
+    const cdLabel=past?'Passée':days===0?'Aujourd\'hui':urgent?`${days}j restants`:`${days}j`;
+    const cdBg=past?'var(--cream)':urgent?'var(--dbg)':days<=7?'var(--wbg)':'var(--sbg)';
+    return `<div class="deadline-row"><div class="deadline-icon">${icon}</div><div class="deadline-label">${label}</div><div style="text-align:right"><div class="deadline-date" style="color:${color}">${fmtDate(date)}</div><div class="countdown" style="background:${cdBg};color:${color}">${cdLabel}</div></div></div>`;
+  }
+
+  const agDays=daysTo(agDate);
+  const badgeBg=isPast?'var(--cream)':agDays<=7?'var(--dbg)':agDays<=30?'var(--wbg)':'var(--sbg)';
+  const badgeColor=isPast?'var(--text3)':agDays<=7?'var(--danger)':agDays<=30?'var(--warn)':'var(--success)';
+
+  return `<div class="ag-card" style="opacity:${isPast?.7:1}">
+    <div class="ag-header">
+      <div>
+        <div class="ag-name">${a.immNom||'Copropriété'} — AG ${a.type}</div>
+        <div style="font-size:11px;color:var(--text3)">${a.heure}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="ag-date-badge" style="background:${badgeBg};color:${badgeColor}">${fmtDate(agDate)}${isPast?' (passée)':agDays===0?' (aujourd\'hui)':' J-'+agDays}</span>
+        <button class="btn btn-danger btn-sm" onclick="delAG('${a.id}')">🗑</button>
+      </div>
+    </div>
+    ${isPast?'<div style="font-size:11px;color:var(--text3);padding:4px 0">AG passée — archives</div>':`
+    <div style="background:var(--cream);border-radius:8px;padding:10px 12px">
+      ${deadlineHTML('📨','Envoyer les convocations (21 jours francs)',convDate)}
+      ${deadlineHTML('📄','Joindre le budget prévisionnel (15j min)',budgetDate)}
+      ${deadlineHTML('📅','ASSEMBLÉE GÉNÉRALE',agDate)}
+    </div>`}
+  </div>`;
+}
+
+// ═══ DASHBOARD ════════════════════════════════════════════════════════════════
+function renderDash(){
+  const alerts=getAlerts();
+  const now=new Date();
+  const upcoming=agendas.filter(a=>new Date(a.date)>=now);
+  
+  document.getElementById('s-total').textContent=immeubles.length;
+  document.getElementById('s-missions').textContent=missions.filter(m=>!m.done).length;
+  document.getElementById('s-ag').textContent=upcoming.length;
+  document.getElementById('s-alerts').textContent=alerts.length;
+
+  const tbl=document.getElementById('dash-table');
+  if(!immeubles.length){
+    tbl.innerHTML='<div class="empty"><div class="empty-icon">🏢</div><div class="empty-title">Aucun immeuble</div><button class="btn btn-primary" onclick="loadDemoData()">🚀 Charger données démo</button></div>';
+  } else {
+    tbl.innerHTML=`<table><thead><tr><th>Copropriété</th><th>DPE</th><th>PPT</th><th>Statut</th></tr></thead><tbody>${immeubles.slice(0,6).map(i=>{
+      const a=alerts.filter(x=>x.imm===i.id);
+      return `<tr onclick="nav('immeubles')"><td>${i.nom}<div style="font-size:10px;color:var(--text3)">${i.adr||''}</div></td>
+      <td><span class="dpe dpe-${i.dpe}">${i.dpe}</span></td>
+      <td><span class="pill ${i.ppt==='oui'?'pill-g':i.ppt==='en-cours'?'pill-b':'pill-r'}">${i.ppt==='oui'?'OK':i.ppt==='en-cours'?'En cours':'Manquant'}</span></td>
+      <td>${a.length?`<span class="pill pill-r">${a.length} alerte${a.length>1?'s':''}</span>`:'<span style="color:var(--text3);font-size:11px">RAS</span>'}</td></tr>`;
+    }).join('')}</tbody></table>`;
+  }
+
+  // Rule alerts
+  const dal=document.getElementById('dash-alerts');
+  if(!alerts.length){dal.innerHTML='<div class="alert-item"><div class="alert-body"><div class="alert-title" style="color:var(--text3);font-size:12px;text-align:center;width:100%;padding:10px;">Aucune alerte règlementaire</div></div></div>';return;}
+  dal.innerHTML=alerts.slice(0,4).map(a=>`<div class="alert-item"><div class="alert-dot" style="background:${a.l==='danger'?'var(--danger)':'var(--warn)'}"></div><div class="alert-body"><div class="alert-title" style="font-size:12px">${a.t}</div><div class="alert-sub">${a.s}</div></div></div>`).join('');
+}
+
+function getAlerts(){
+  const a=[];
+  immeubles.forEach(i=>{
+    if(i.ppt==='non')a.push({imm:i.id,l:'danger',t:`PPT manquant — ${i.nom}`,s:'Obligation légale jan. 2025'});
+    if(['F','G'].includes(i.dpe))a.push({imm:i.id,l:'danger',t:`DPE ${i.dpe} — ${i.nom}`,s:'Passoire thermique — rénovation prioritaire'});
+    if(i.an&&parseInt(i.an)<1975)a.push({imm:i.id,l:'warn',t:`Immeuble ancien — ${i.nom}`,s:`Construit en ${i.an} — DTG recommandé`});
+    if(i.chauf==='Fioul collectif')a.push({imm:i.id,l:'warn',t:`Fioul — ${i.nom}`,s:'Conversion PAC obligatoire à planifier'});
+  });
+  
+  const b = document.getElementById('badge-alertes');
+  if(b) { b.textContent=a.length; b.style.display=a.length?'inline':'none'; }
+  return a;
+}
+
+function renderAlertes(){
+  const a=getAlerts();
+  const el=document.getElementById('all-alerts');
+  if(!a.length){el.innerHTML='<div class="alert-item"><div style="color:var(--text3);font-size:12px;width:100%;text-align:center;padding:20px">Aucune alerte</div></div>';return;}
+  el.innerHTML=a.map(x=>`
+    <div class="alert-item">
+      <div class="alert-dot" style="background:${x.l==='danger'?'var(--danger)':'var(--warn)'}"></div>
+      <div class="alert-body">
+        <div class="alert-title">${x.t}</div>
+        <div class="alert-sub">${x.s}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="pill ${x.l==='danger'?'pill-r':'pill-a'}">${x.l==='danger'?'Urgent':'Attention'}</span>
+        <button class="btn btn-ghost btn-sm" onclick="nav('missions');showMissionModal()">+ Tâche</button>
+      </div>
+    </div>`).join('');
+}
+
+// ═══ CHAT ═════════════════════════════════════════════════════════════════════
 function sc(t){document.getElementById('chat-input').value=t;sendChat();}
 function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}}
 function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,90)+'px';}
@@ -691,116 +1107,52 @@ async function sendChat(){
   const t=inp.value.trim();if(!t)return;
   inp.value='';inp.style.height='auto';
   
-  const msgs = document.getElementById('chat-messages');
+  const msgs=document.getElementById('chat-messages');
   msgs.innerHTML += `<div class="msg user"><div class="bubble">${t.replace(/</g,'&lt;')}</div><div class="msg-time">${getTime()}</div></div>`;
-  msgs.scrollTop = msgs.scrollHeight;
+  msgs.scrollTop=msgs.scrollHeight;
   
   setTimeout(() => {
-    let rep = apiProvider === 'demo' ? "En Mode Démo, je simule une réponse. D'après la loi de 1965, cette action nécessite un vote à la majorité de l'article 25." : "Connexion API établie. Analyse de la question juridique...";
+    let rep = apiProvider === 'demo' 
+      ? "En Mode Démo, je simule une réponse rapide. Pour bénéficier d'une véritable analyse de la loi 1965 ou ALUR, veuillez configurer une clé API valide en bas à gauche." 
+      : "Connexion API " + apiProvider.toUpperCase() + " établie. Analyse juridique en cours... (Simulé)";
     msgs.innerHTML += `<div class="msg ai"><div class="ai-lbl"><div class="ai-lbl-dot">✦</div><span class="ai-lbl-name">SYNDIA</span></div><div class="bubble">${rep}</div><div class="msg-time">${getTime()}</div></div>`;
-    msgs.scrollTop = msgs.scrollHeight;
+    msgs.scrollTop=msgs.scrollHeight;
   }, 1000);
 }
 
-// ═══ DONNEES DE DEMO (ONBOARDING) ════════════════════════════════════════
-function loadDemoData() {
-  immeubles = [
-    { id: '1', nom: 'Résidence Les Pins', lots: '45', dpe: 'G', ppt: 'non' },
-    { id: '2', nom: 'Le Montesquieu', lots: '18', dpe: 'D', ppt: 'en-cours' },
-    { id: '3', nom: 'Villa Nova', lots: '32', dpe: 'C', ppt: 'oui' }
-  ];
-  missions = [
-    { id: 'm1', titre: 'Demander 3 devis remplacement chaudière (Les Pins)', done: false },
-    { id: 'm2', titre: 'Convoquer AG extraordinaire', done: false }
-  ];
-  localStorage.setItem('syndia_imm', JSON.stringify(immeubles));
-  localStorage.setItem('syndia_missions', JSON.stringify(missions));
-  renderDash(); renderImm(); renderMissions(); renderAlertes();
-}
-
-// ═══ CRUD IMMEUBLES & MISSIONS ═══════════════════════════════════════════
-function showAddModal() { document.getElementById('add-modal').classList.remove('hidden'); }
-function saveImm() {
-  immeubles.push({
-    id: Date.now().toString(),
-    nom: document.getElementById('i-nom').value || 'Nouvel Immeuble',
-    lots: document.getElementById('i-lots').value,
-    dpe: document.getElementById('i-dpe').value,
-    ppt: document.getElementById('i-ppt').value
+// ═══ UTILS ════════════════════════════════════════════════════════════════════
+function copyResult(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  navigator.clipboard.writeText(el.innerText).then(()=>{
+    const b=event.target;b.textContent='✓ Copié !';setTimeout(()=>b.textContent='Copier',2000);
   });
-  localStorage.setItem('syndia_imm', JSON.stringify(immeubles));
-  closeM('add-modal'); renderDash(); renderImm(); renderAlertes();
 }
-function delImm(id) { immeubles = immeubles.filter(i=>i.id!==id); localStorage.setItem('syndia_imm', JSON.stringify(immeubles)); renderImm(); renderDash(); renderAlertes(); }
-
-function showMissionModal() { document.getElementById('mission-modal').classList.remove('hidden'); }
-function saveMission() {
-  const t = document.getElementById('m-titre').value; if(!t) return;
-  missions.push({ id: Date.now().toString(), titre: t, done: false });
-  localStorage.setItem('syndia_missions', JSON.stringify(missions));
-  closeM('mission-modal'); renderMissions(); renderDash();
+function prefillPPT(){
+  document.getElementById('ppt-adr').value='Résidence Les Mimosas, 15 av. du Soleil, 13100 Aix-en-Provence';
+  document.getElementById('ppt-an').value='1978';
+  document.getElementById('ppt-lots').value='32';
+  document.getElementById('ppt-surf').value='2400';
+  document.getElementById('ppt-dpe').value='E';
+  document.getElementById('ppt-chauf').value='Gaz naturel';
+  document.getElementById('ppt-trav').value='Ravalement façade sud 2015, chaudière 2019';
+  document.getElementById('ppt-pb').value='Infiltrations toiture R+5, fenêtres simple vitrage, ascenseur vétuste';
 }
-function toggleMission(id) { const m = missions.find(x=>x.id===id); if(m) m.done = !m.done; localStorage.setItem('syndia_missions', JSON.stringify(missions)); renderMissions(); renderDash(); }
-
-// ═══ RENDU UI ════════════════════════════════════════════════════════════
-function renderDash() {
-  const alerts = getAlerts();
-  document.getElementById('s-total').textContent = immeubles.length;
-  document.getElementById('s-missions').textContent = missions.filter(m=>!m.done).length;
-  document.getElementById('s-ppt').textContent = immeubles.filter(i=>i.ppt==='non').length;
-  document.getElementById('s-alerts').textContent = alerts.length;
-  
-  const b = document.getElementById('badge-alertes');
-  b.textContent = alerts.length; b.style.display = alerts.length ? 'inline' : 'none';
-
-  const tbl = document.getElementById('dash-table');
-  if(!immeubles.length) { 
-    tbl.innerHTML = '<div class="empty"><div class="empty-icon">🏢</div><div class="empty-title">Aucun immeuble</div><button class="btn btn-primary" onclick="loadDemoData()">🚀 Charger données démo</button></div>'; 
-  } else {
-    tbl.innerHTML = `<table><thead><tr><th>Copropriété</th><th>DPE</th><th>PPT</th></tr></thead><tbody>${immeubles.slice(0,4).map(i => `
-      <tr onclick="nav('immeubles')">
-        <td>${i.nom}</td>
-        <td><span class="dpe dpe-${i.dpe}">${i.dpe}</span></td>
-        <td><span class="pill ${i.ppt==='oui'?'pill-g':i.ppt==='en-cours'?'pill-b':'pill-r'}">${i.ppt==='oui'?'OK':i.ppt==='en-cours'?'En cours':'Manquant'}</span></td>
-      </tr>`).join('')}</tbody></table>`;
-  }
-
-  const alist = document.getElementById('dash-alerts');
-  if(!alerts.length) alist.innerHTML = '<div style="padding:20px;text-align:center;font-size:12px;color:var(--text3)">Aucune alerte active</div>';
-  else alist.innerHTML = alerts.slice(0,4).map(a => `<div class="alert-item"><div class="alert-dot" style="background:${a.lvl==='danger'?'var(--danger)':'var(--warn)'}"></div><div><div class="alert-title">${a.title}</div><div class="alert-sub">${a.sub}</div></div></div>`).join('');
+function prefillCS(){
+  document.getElementById('cs-nom').value='Résidence Les Oliviers';
+  document.getElementById('cs-periode').value='Exercice 2024';
+  document.getElementById('cs-finances').value='Budget total : 52 000€ | Charges courantes : 44 000€ | Fonds travaux : 8 000€ | Taux impayés : 4,8% (2 500€)';
+  document.getElementById('cs-tech').value='Toiture : bon état (refaite 2019). Chaufferie gaz : entretien annuel OK, chaudière 2020. Ascenseur : révision annuelle OK, contrat Schindler. Façades : ravalement prévu 2025.';
+  document.getElementById('cs-travaux').value='Ravalement façade votée AG 2024 (38 000€) : 2 devis reçus, décision en attente. Remplacement interphonie (6 500€) : à voter AG 2025.';
+  document.getElementById('cs-points').value='Infiltration cave lot 8 : expertise en cours. Copropriétaire lot 3 : impayés depuis juin 2024, mise en demeure envoyée.';
 }
-
-function renderImm() {
-  const tbl = document.getElementById('imm-table');
-  if(!immeubles.length) { tbl.innerHTML = '<div class="empty"><button class="btn btn-primary" onclick="loadDemoData()">🚀 Charger données démo</button></div>'; return; }
-  tbl.innerHTML = `<table><thead><tr><th>Copropriété</th><th>Lots</th><th>DPE</th><th>Actions</th></tr></thead><tbody>${immeubles.map(i => `
-    <tr>
-      <td>${i.nom}</td><td>${i.lots||'-'}</td><td><span class="dpe dpe-${i.dpe}">${i.dpe}</span></td>
-      <td><button class="btn btn-danger btn-sm" onclick="delImm('${i.id}')">Supprimer</button></td>
-    </tr>`).join('')}</tbody></table>`;
-}
-
-function renderMissions() {
-  const todo = missions.filter(m=>!m.done); const done = missions.filter(m=>m.done);
-  const html = (m) => `<div class="alert-item" style="padding:10px 0;border-bottom:1px solid var(--border)"><input type="checkbox" ${m.done?'checked':''} onchange="toggleMission('${m.id}')" style="margin-right:10px;cursor:pointer"><div style="flex:1;font-size:13px;text-decoration:${m.done?'line-through':''}">${m.titre}</div><button class="btn btn-ghost btn-sm" onclick="missions=missions.filter(x=>x.id!=='${m.id}');localStorage.setItem('syndia_missions',JSON.stringify(missions));renderMissions();renderDash();">🗑</button></div>`;
-  document.getElementById('missions-todo').innerHTML = todo.length ? todo.map(html).join('') : '<div style="font-size:12px;color:var(--text3)">Rien à faire ! 🎉</div>';
-  document.getElementById('missions-done').innerHTML = done.length ? done.map(html).join('') : '';
-}
-
-function getAlerts() {
-  let a = [];
-  immeubles.forEach(i => {
-    if(i.ppt==='non') a.push({ lvl: 'danger', title: `PPT manquant — ${i.nom}`, sub: 'Urgent: Obligation 2025' });
-    if(['F','G'].includes(i.dpe)) a.push({ lvl: 'danger', title: `DPE ${i.dpe} — ${i.nom}`, sub: 'Passoire thermique' });
-  });
-  return a;
-}
-
-function renderAlertes() {
-  const list = document.getElementById('all-alerts');
-  const a = getAlerts();
-  if(!a.length) { list.innerHTML = '<div style="padding:20px;text-align:center;font-size:12px;color:var(--text3)">Aucune alerte active</div>'; return; }
-  list.innerHTML = a.map(msg => `<div class="alert-item"><div class="alert-dot" style="background:${msg.lvl==='danger'?'var(--danger)':'var(--warn)'}"></div><div style="flex:1"><div class="alert-title">${msg.title}</div><div class="alert-sub">${msg.sub}</div></div><button class="btn btn-ghost btn-sm" onclick="nav('missions');showMissionModal()">+ Tâche</button></div>`).join('');
+function simulateEnedis(){
+  const alerts=document.getElementById('energy-alerts');
+  alerts.innerHTML=`
+    <div class="energy-alert">
+      <div class="energy-alert-title">🚨 Anomalie détectée — Résidence Les Pins</div>
+      <div class="energy-alert-sub">Consommation électrique en hausse de <strong>+38% cette nuit</strong> (00h-06h) par rapport à la moyenne des 30 derniers jours. Cela peut indiquer une fuite ou un dysfonctionnement.</div>
+    </div>`;
 }
 </script>
 </body>
